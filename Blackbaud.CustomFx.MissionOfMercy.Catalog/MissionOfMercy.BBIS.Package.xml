@@ -1,0 +1,20 @@
+<PackageSpec 
+    xmlns="bb_appfx_package"
+    xmlns:common="bb_appfx_commontypes"
+    ID="00cac67a-1aa8-4c84-8e1d-72a57ac9cfae"
+    Name="Mission Of Mercy Package"
+    Description="Mission Of Mercy Package"
+    Author="Blackbaud Professional Services"
+    >    
+	
+	<common:DependencyList>
+        <common:Dependency CatalogAssembly="Blackbaud.CustomFx.MissionOfMercy.Catalog.dll" CatalogItem="Blackbaud.CustomFx.MissionOfMercy.Catalog.USR_USP_CHILDREN_SEARCH.xml" />
+        <common:Dependency CatalogAssembly="Blackbaud.CustomFx.MissionOfMercy.Catalog.dll" CatalogItem="Blackbaud.CustomFx.MissionOfMercy.Catalog.USR_USP_ADD_SOLICITOR_TO_RECURRING_GIFT_CHILDSPONSORSHIP.xml" />
+        <common:Dependency CatalogAssembly="Blackbaud.CustomFx.MissionOfMercy.Catalog.dll" CatalogItem="Blackbaud.CustomFx.MissionOfMercy.Catalog.USR_USP_UPDATEBATCHNUMBERBYSPONSORSHIPID.xml" />
+        <common:Dependency CatalogAssembly="Blackbaud.CustomFx.MissionOfMercy.Catalog.dll" CatalogItem="Blackbaud.CustomFx.MissionOfMercy.Catalog.USR_USP_GETCHILDINFOFORCONSTITUENTID.xml" />
+        <common:Dependency CatalogAssembly="Blackbaud.CustomFx.MissionOfMercy.Catalog.dll" CatalogItem="Blackbaud.CustomFx.MissionOfMercy.Catalog.Website.SponsorshipCheckoutSourceMain.DataList.xml" />
+        <common:Dependency CatalogAssembly="Blackbaud.CustomFx.MissionOfMercy.Catalog.dll" CatalogItem="Blackbaud.CustomFx.MissionOfMercy.Catalog.Website.SponsorshipCheckoutSourceReps.DataList.xml" />
+        <common:Dependency CatalogAssembly="Blackbaud.CustomFx.MissionOfMercy.Catalog.dll" CatalogItem="Blackbaud.CustomFx.MissionOfMercy.Catalog.SponsorshipOpportunity.Query.xml" />
+    </common:DependencyList>
+
+</PackageSpec>

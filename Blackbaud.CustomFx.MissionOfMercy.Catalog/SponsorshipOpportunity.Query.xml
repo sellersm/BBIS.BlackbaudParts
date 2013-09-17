@@ -1,0 +1,71 @@
+﻿<QueryViewSpec
+	xmlns="bb_appfx_queryview"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="d70e0a2b-c7f8-4def-af56-a36c80d8a292"
+	Name="Sponsorship Opportunity Query"
+	Description="Returns a full list of child sponsorship opportunities"
+	Author="HAFX\Administrator"
+	IsRoot="true"
+	PrimaryKeyField="ID"
+	RecordType="SPONSORSHIPOPPORTUNITY"
+	common:SecurityUIFolder="Sponsorship"
+	>
+
+	<!-- define the view used to return data for the query -->
+	<ViewImplementation ViewName="USR_V_QUERY_SPONSORSHIPOPPORTUNITY">
+		<ViewSQL>
+			<![CDATA[
+SELECT
+  so.ID,
+  so_child.FIRSTNAME,
+  so_child.LASTNAME,
+  so_child.FIRSTNAME + ' ' + so_child.LASTNAME AS FULLNAME,
+  countryconst.KEYNAME as COUNTRYNAME,
+  countryconst.ID as COUNTRYID,
+  so_child.AGE,
+  SUBSTRING(so_child.BIRTHDATE,5,2) + '/' + SUBSTRING(so_child.BIRTHDATE,7,2) + '/' + SUBSTRING(so_child.BIRTHDATE,1,4)  as BIRTHDATE,    
+  CASE so_child.GENDER
+		WHEN 'Female' THEN 'Girl'
+		WHEN 'Male' THEN 'Boy'
+    END AS GENDER,
+  so_child.GENDERCODE,
+  childprojectconst.KEYNAME as PROJECTNAME,
+  childprojectconst.ID AS PROJECTID,
+  so.LOOKUPID as CHILDNO,
+  ELIGIBILITY,
+  AVAILABILITY
+FROM 
+  dbo.SPONSORSHIPOPPORTUNITY so
+  INNER JOIN dbo.SPONSORSHIPLOCATION sloc on sloc.ID = so.SPONSORSHIPLOCATIONID
+  INNER JOIN dbo.SPONSORSHIPOPPORTUNITYCHILD so_child on so_child.ID = so.ID
+  INNER JOIN dbo.CONSTITUENT childconst on childconst.ID = so_child.CONSTITUENTID    -- This is the constituent record that has the note of type "Child Bio"
+  LEFT OUTER JOIN dbo.USR_CHILDPROJECTEXTENSION projectext on sloc.FIELDOFFICEID = projectext.ID  
+  LEFT OUTER JOIN dbo.CONSTITUENT childprojectconst on childprojectconst.ID = projectext.ID       -- This is the constituent record that has note of type "Project Bio"
+  LEFT OUTER JOIN dbo.USR_COUNTRYEXTENSION countryext on projectext.COUNTRYEXTENSIONID = countryext.ID
+  LEFT OUTER JOIN dbo.CONSTITUENT countryconst on countryconst.ID = countryext.ID         -- This is the constituent record that has the note of type "Country Bio"			
+--WHERE
+	--ELIGIBILITY = 'Eligible'
+	--AND AVAILABILITY = 'Available'
+			]]>
+		</ViewSQL>
+	</ViewImplementation>
+
+	<!-- describe each field in the view output -->
+	<Output>
+		<OutputFields>
+      <OutputField Name="ID" Caption="System record ID" Category="System Fields" />
+			<OutputField Name="FIRSTNAME" Caption="First Name" DataType="String" />
+			<OutputField Name="LASTNAME" Caption="Last Name" DataType="String" />
+      <OutputField Name="FULLNAME" Caption="Full Name" DataType="String" />
+			<OutputField Name="COUNTRYNAME" Caption="Country Name" DataType="String" />
+      <OutputField Name="AGE" Caption="Age" DataType="String" />
+      <OutputField Name="BIRTHDATE" Caption="Birthdate" DataType="String" />
+      <OutputField Name="GENDER" Caption="Gender" DataType="String" />
+      <OutputField Name="GENDERCODE" Caption="Gender Code" DataType="String" />
+      <OutputField Name="PROJECTNAME" Caption="Project Name" DataType="String" />
+      <OutputField Name="CHILDNO" Caption="Child Number" DataType="String" />
+    </OutputFields>
+	</Output>
+
+</QueryViewSpec>
+

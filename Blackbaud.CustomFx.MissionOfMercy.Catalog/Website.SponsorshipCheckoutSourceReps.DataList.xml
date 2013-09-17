@@ -1,0 +1,75 @@
+﻿<DataListSpec 
+	xmlns="bb_appfx_datalist"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="ab6d3036-b61f-45a5-bbaf-5e01f9ef9349" 
+	Name="Website Sponsorship Checkout Source Reps Data List"
+	Description="Used to populate the Ministry Rep source drop down on the sponsorship checkout page"
+	Author="Cary Mayeda"
+	common:SecurityUIFolder="Website">
+
+	<!-- 
+	Remarks:    The @CONTEXT ID isn't currently used.  CRM apparently requires a non-empty string to be passed in, so "test" or any string can be used.
+				@CONTEXT ID may later determine what set of Sources should be displayed
+
+	History:
+	Date            Modified By     Comments
+	17-Jul-2012		CMayeda			Initial Version
+	-->
+
+	<!-- define the SP that returns the data for the datalist -->
+	<SPDataList SPName="USR_USP_DATALIST_WEBSITESPONSORSHIPCHECKOUTSOURCE_REPS">
+		<common:CreateProcedureSQL>
+			<![CDATA[
+create procedure dbo.USR_USP_DATALIST_WEBSITESPONSORSHIPCHECKOUTSOURCE_REPS (@CONTEXTID nvarchar(100))
+as begin
+	-- CONTEXTID is not currently used.
+	
+	set nocount on;
+
+	declare @sources table (
+		SORTORDER tinyint,
+		APPEALID uniqueidentifier,
+		SOLICITORID uniqueidentifier,
+		SOURCEDESC nvarchar(50)
+		)
+
+	insert @sources
+	values
+	(1, '14E8838E-A89B-4481-8D8F-434E82EDC02E', 'B3C5677D-86F4-4B18-84A7-E2F31A2E928D', 'Candy Wigington'),
+	(2, '6263FDBE-35ED-4211-A635-92B0D8F64F7D', '289FAF87-C584-4A2C-8114-03FE09DD37CD', 'Ben Rodgers')
+	
+	select	SORTORDER,
+			APPEALID,
+			SOLICITORID,
+			SOURCEDESC
+	  from	@sources 
+	  order by SORTORDER
+end	
+
+]]>
+		</common:CreateProcedureSQL>
+	</SPDataList>
+
+	<!-- describe the context ID parameter for the SP (if applicable) -->
+	<Context ContextRecordType="NOTUSED" RecordIDParameter="CONTEXTID"/>
+
+	<!-- describe any parameters (other than the context ID) defined on the SP
+	<Parameters>
+		<common:FormMetaData>
+			<common:FormFields>
+				<common:FormField FieldID="PARAMETER1" Caption="Paramter1" DataType="REPLACE_WITH_DATATYPE"/>
+			</common:FormFields>
+		</common:FormMetaData>
+	</Parameters>-->
+
+	<!-- define the output fields in the list -->
+	<Output>
+		<OutputFields>
+			<OutputField FieldID="SORTORDER" Caption="Sort order" DataType="TinyInt" />
+			<OutputField FieldID="APPEALID" Caption="Appeal ID" DataType="Guid" />
+			<OutputField FieldID="SOLICITORID" Caption="Solicitor ID" DataType="Guid" />
+			<OutputField FieldID="SOURCEDESC" Caption="Source description" DataType="String" />
+		</OutputFields>
+	</Output>
+
+</DataListSpec>

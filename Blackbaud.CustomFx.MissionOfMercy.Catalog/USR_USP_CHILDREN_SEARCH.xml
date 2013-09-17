@@ -1,0 +1,42 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="b9cdaa23-50ba-4d94-8883-4b9b20e48525"
+	Name="USR_USP_CHILDREN_SEARCH"
+	Description="USR_USP_CHILDREN_SEARCH"
+	Author="Blackbaud Professional Services"
+	SPName="USR_USP_CHILDREN_SEARCH"
+    GrantServiceRolePermission="true"
+	>
+
+	<CreateProcedureSQL>
+		<![CDATA[
+            create procedure dbo.USR_USP_CHILDREN_SEARCH
+            (
+                @GENDER nvarchar(25),
+                @AGE0 nvarchar(10),
+                @AGE1 nvarchar(10),
+                @COUNTRY nvarchar(25)
+            )
+            as
+            begin
+                set @GENDER = nullif(@GENDER, '');
+                set @AGE0 = nullif(@AGE0, '');
+                set @AGE1 = nullif(@AGE1, '');
+                set @COUNTRY = nullif(@COUNTRY, '');
+
+	            select
+                    *
+                from
+                    USR_V_QUERY_SPONSORSHIPOPPORTUNITY
+                where
+                    ((@GENDER is null) or (GENDER = @GENDER))
+	                and ((@COUNTRY is null) or (COUNTRYNAME = @COUNTRY))
+	                and ((@AGE0 is null) or (@AGE1 is null) or (AGE >= @AGE0 and AGE <= @AGE1))
+                order by
+                    LASTNAME asc, FIRSTNAME asc
+            end
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

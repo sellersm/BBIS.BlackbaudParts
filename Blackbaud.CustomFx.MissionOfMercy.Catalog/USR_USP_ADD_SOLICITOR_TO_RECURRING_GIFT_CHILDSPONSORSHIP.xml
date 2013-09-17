@@ -1,0 +1,151 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="4a43d50d-2963-49be-a841-63428875527b"
+	Name="USR_USP_ADD_SOLICITOR_TO_RECURRING_GIFT_CHILDSPONSORSHIP"
+	Description="Adds a Solicitor to a Recurring Gift on a Child Sponsorship"
+	Author="Memphis Sellers"
+	SPName="USR_USP_ADD_SOLICITOR_TO_RECURRING_GIFT_CHILDSPONSORSHIP"
+    GrantServiceRolePermission="true"
+	>
+
+	<!-- 
+	Remarks:    Adds a Solicitor to a Recurring Gift on a Child Sponsorship. Called from all the Add sponsorship forms.
+				
+	History:
+	Date            Modified By     Comments
+	14-Sep-2012		Memphis			Initial Version
+	-->
+	
+	<CreateProcedureSQL>
+		<![CDATA[
+create procedure dbo.USR_USP_ADD_SOLICITOR_TO_RECURRING_GIFT_CHILDSPONSORSHIP
+	@SPONSORSHIPID uniqueidentifier = null, 
+	@CONSTITUENTID uniqueidentifier = null,
+	@CHANGEAGENTID uniqueidentifier = null
+as
+begin
+	-- do work
+	SET NOCOUNT ON;
+	
+	begin try
+		declare @ORGANIZATIONAMOUNT money = null;
+		declare @AMOUNT money = null;
+		declare @REVENUESPLITID uniqueidentifier;
+		declare @DATALOADED bit = 0
+		declare @SOLICITORS xml = null 
+		declare @TSLONG bigint = 0 
+		declare @OPPORTUNITYID uniqueidentifier = null 
+		declare @USECREDITRULES bit = null 
+		declare @FUNDINGREQUESTID uniqueidentifier = null 
+		declare @BASECURRENCYID uniqueidentifier = null 
+
+		--declare @BASECURRENCYID uniqueidentifier;
+		declare @ORGANIZATIONEXCHANGERATEID uniqueidentifier;
+		declare @BASEEXCHANGERATEID uniqueidentifier;
+		declare @BASETOORGANIZATIONEXCHANGERATEID uniqueidentifier;
+		
+		select @REVENUESPLITID = REVENUESPLITID
+				from dbo.SPONSORSHIP
+				where ID = @SPONSORSHIPID
+		
+		if @REVENUESPLITID is null
+			raiserror 10000 'Unable to find REVENUESPLITID for this Sponsorship!'
+		
+		select @AMOUNT = AMOUNT 
+				from dbo.REVENUESPLIT
+				where ID = @REVENUESPLITID
+		select
+			@BASECURRENCYID = isnull(REVENUE_EXT.NONPOSTABLEBASECURRENCYID, CURRENCYSET.BASECURRENCYID),
+			@ORGANIZATIONEXCHANGERATEID = FINANCIALTRANSACTION.ORGEXCHANGERATEID
+		from
+			dbo.FINANCIALTRANSACTIONLINEITEM
+		inner join 
+			dbo.REVENUESPLIT_EXT on FINANCIALTRANSACTIONLINEITEM.ID = REVENUESPLIT_EXT.ID
+		inner join 
+			dbo.FINANCIALTRANSACTION on FINANCIALTRANSACTIONLINEITEM.FINANCIALTRANSACTIONID = FINANCIALTRANSACTION.ID
+		inner join 
+			dbo.REVENUE_EXT on FINANCIALTRANSACTION.ID = REVENUE_EXT.ID
+		inner join 
+			dbo.PDACCOUNTSYSTEM on FINANCIALTRANSACTION.PDACCOUNTSYSTEMID = PDACCOUNTSYSTEM.ID
+		inner join 
+			dbo.CURRENCYSET on PDACCOUNTSYSTEM.CURRENCYSETID = CURRENCYSET.ID
+		where
+			FINANCIALTRANSACTIONLINEITEM.ID = @REVENUESPLITID -- @ID
+			and FINANCIALTRANSACTION.DELETEDON is null
+			and FINANCIALTRANSACTIONLINEITEM.TYPECODE <> 1;
+
+		if @CHANGEAGENTID is null
+			exec dbo.USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output;
+
+		--Solicitors don't have a transaction currency, @BASETOORGANIZATIONEXCHANGERATEID handles the
+		-- case where the revenue split ORGANIZATIONEXCHANGERATE is for converting from transaction to org currencies                 
+
+		exec dbo.USP_CURRENCY_GETCURRENCYVALUES
+			  0,
+			  null,
+			  @BASECURRENCYID,
+			  @BASEEXCHANGERATEID,
+			  null,
+			  null,
+			  null,
+			  null,
+			  @ORGANIZATIONEXCHANGERATEID,
+			  0,
+			  @BASETOORGANIZATIONEXCHANGERATEID output;
+					
+		-- this is what's in the convertamountsinxml UFN:
+		declare @ORGANIZATIONCURRENCYID uniqueidentifier = dbo.UFN_CURRENCY_GETORGANIZATIONCURRENCY();
+
+		-- get the organizationamount:
+		select @ORGANIZATIONAMOUNT = 
+		case
+			when @BASECURRENCYID <> @ORGANIZATIONCURRENCYID
+				then dbo.UFN_CURRENCY_CONVERT(@AMOUNT, @ORGANIZATIONEXCHANGERATEID)
+			else @AMOUNT
+		end --ORGANIZATIONAMOUNT					
+
+		--finally do the insert here:
+		insert into [REVENUESOLICITOR] 
+			([REVENUESPLITID], 
+			[AMOUNT],
+			[CONSTITUENTID],
+			[ID],
+			[BUSINESSUNITCODEID],
+			[SEQUENCE],
+			[BASECURRENCYID],
+			[ORGANIZATIONAMOUNT],
+			[ORGANIZATIONEXCHANGERATEID],				
+			ADDEDBYID, 
+			CHANGEDBYID, 
+			DATEADDED, 
+			DATECHANGED)
+		select @REVENUESPLITID, 
+			@AMOUNT,  -- @AMOUNT above
+			@CONSTITUENTID,  --fundraiserid
+			newid(), --[ID],  --newid()
+			NULL,   -- [BUSINESSUNITCODEID], -- NULL
+			1,      --[SEQUENCE],  -- ???
+			@BASECURRENCYID, -- 
+			@ORGANIZATIONAMOUNT,
+			@ORGANIZATIONEXCHANGERATEID,
+			@CHANGEAGENTID, 
+			@CHANGEAGENTID, 
+			GETDATE(), 
+			GETDATE()
+	
+			return 0;
+	
+	end try
+	
+	begin catch
+		exec dbo.USP_RAISE_ERROR;
+		return 1;	
+	end catch
+	
+end
+
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

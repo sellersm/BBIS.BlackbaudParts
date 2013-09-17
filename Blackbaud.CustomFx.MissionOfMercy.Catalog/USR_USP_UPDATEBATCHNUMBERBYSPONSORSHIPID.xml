@@ -1,0 +1,71 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="59eaa544-f1ed-4779-8575-a8ba0aba2b3e"
+	Name="USR_USP_UPDATEBATCHNUMBERBYSPONSORSHIPID"
+	Description="USR_USP_UPDATEBATCHNUMBERBYSPONSORSHIPID"
+	Author="Blackbaud Professional Services"
+	SPName="USR_USP_UPDATEBATCHNUMBERBYSPONSORSHIPID"
+    GrantServiceRolePermission="true"
+	>
+
+	<CreateProcedureSQL>
+		<![CDATA[
+            create procedure dbo.USR_USP_UPDATEBATCHNUMBERBYSPONSORSHIPID
+            (
+                @ID uniqueidentifier,
+                @BATCHNUMBER nvarchar(100)
+            )
+            as
+            begin
+	            declare @REVENUEID uniqueidentifier,
+		                @CURRENTDATE datetime,
+		                @CHANGEAGENTID uniqueidentifier;
+
+                set @CURRENTDATE = getdate();
+
+                exec USP_CHANGEAGENT_GETORCREATECHANGEAGENT @CHANGEAGENTID output
+
+                select	
+	                top 1
+		                @REVENUEID = FTLI.FINANCIALTRANSACTIONID
+                from
+	                SPONSORSHIP S
+	                inner join FINANCIALTRANSACTIONLINEITEM FTLI on S.REVENUESPLITID = FTLI.ID
+                where
+	                S.ID = @ID;
+	
+                if exists(select 1 from REVENUE_EXT where ID = @REVENUEID)
+                begin
+	                update
+		                REVENUE_EXT
+	                set
+		                BATCHNUMBER = @BATCHNUMBER,
+		                CHANGEDBYID = @CHANGEAGENTID,
+		                DATECHANGED = @CURRENTDATE
+	                where
+		                ID = @REVENUEID;
+                end
+                else
+                begin
+	                insert into
+		                REVENUE_EXT
+		                (
+			                ID,
+			                BATCHNUMBER,
+			                ADDEDBYID,
+			                CHANGEDBYID
+		                )
+	                values
+		                (
+			                @REVENUEID,
+			                @BATCHNUMBER,
+			                @CHANGEAGENTID,
+			                @CHANGEAGENTID
+		                )	
+                end
+            end
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>

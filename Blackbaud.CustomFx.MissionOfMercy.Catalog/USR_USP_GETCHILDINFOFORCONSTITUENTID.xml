@@ -1,0 +1,54 @@
+﻿<SQLStoredProcedureSpec
+	xmlns="bb_appfx_sqlstoredprocedure"
+	xmlns:common="bb_appfx_commontypes" 
+	ID="457c8047-837d-42ae-8e16-14406b222853"
+	Name="USR_USP_GETCHILDINFOFORCONSTITUENTID"
+	Description="USR_USP_GETCHILDINFOFORCONSTITUENTID"
+	Author="Blackbaud Professional Services"
+	SPName="USR_USP_GETCHILDINFOFORCONSTITUENTID"
+    GrantServiceRolePermission="true"
+	>
+
+	<CreateProcedureSQL>
+		<![CDATA[
+            create procedure dbo.USR_USP_GETCHILDINFOFORCONSTITUENTID
+            (
+                @ID uniqueidentifier
+            )
+            as
+            begin
+                declare @T table(ID uniqueidentifier, NAME nvarchar(100), LOOKUPID nvarchar(25));
+
+                insert into @T
+                select
+	                FT.ID,
+	                dbo.UFN_SPONSORSHIPOPPORTUNITY_TRANSLATIONFUNCTION(S.SPONSORSHIPOPPORTUNITYID) NAME,
+	                SO.LOOKUPID
+                from
+	                FINANCIALTRANSACTION FT
+	                inner join FINANCIALTRANSACTIONLINEITEM FTLI on FT.ID = FTLI.FINANCIALTRANSACTIONID
+	                inner join SPONSORSHIP S on FTLI.ID = S.REVENUESPLITID
+	                left join SPONSORSHIPOPPORTUNITY SO on S.SPONSORSHIPOPPORTUNITYID = SO.ID	
+                where
+	                FT.CONSTITUENTID = @ID
+	            	                        
+                select
+					ID,
+					NAME,
+					LOOKUPID
+				from
+					@T
+				union all
+                select 
+					RECURRINGGIFTINSTALLMENTPAYMENT.PAYMENTID,
+	                t.NAME,
+	                t.LOOKUPID
+				from 
+					dbo.RECURRINGGIFTINSTALLMENTPAYMENT
+					inner join dbo.RECURRINGGIFTINSTALLMENT on RECURRINGGIFTINSTALLMENT.ID = RECURRINGGIFTINSTALLMENTPAYMENT.RECURRINGGIFTINSTALLMENTID
+					inner join @T t on RECURRINGGIFTINSTALLMENT.REVENUEID = t.ID					
+            end
+		]]>
+	</CreateProcedureSQL>
+
+</SQLStoredProcedureSpec>
