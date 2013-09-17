@@ -249,15 +249,14 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
         private bool processPayment()
         {
             MyFinancialCommitmentsOptions options = (MyFinancialCommitmentsOptions)this.Content.GetContent(typeof(MyFinancialCommitmentsOptions));
-
+                        
             BBPSPaymentInfo payment = new BBPSPaymentInfo();
             payment.DemoMode = options.DemoMode;
-            payment.MerchantAcctID = 14;
-            payment.Bbpid = Utility.GetBbbid(14, this.API.Transactions.MerchantAccounts);
-
-            int designationId = Utility.GetBbncDesignationId(Convert.ToString(ViewState["GiftId"]));
-
-            payment.SkipCardValidation = true;
+            payment.MerchantAcctID = options.MerchantAccountID;
+            payment.Bbpid = Utility.GetBbbid(options.MerchantAccountID, this.API.Transactions.MerchantAccounts);
+            payment.SkipCardValidation = options.DemoMode;  
+            
+            int designationId = Utility.GetBbncDesignationId(Convert.ToString(ViewState["GiftId"]));            
             payment.AddDesignationInfo(Convert.ToDecimal(this.txtAmount.Text), "BBIS Child Sponsorship Transaction", designationId);
             payment.AppealID = 1;
             payment.Comments = "";
@@ -273,8 +272,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             payment.DonorStreetAddress = this.txtBillingAddress.Text;
             payment.DonorCity = this.txtBillingCity.Text;
             payment.DonorStateProvince = this.cmbBillingCountry.SelectedValue == "US" ? this.cmbBillingState.SelectedValue : this.txtBillingRegion.Text;
-            payment.DonorZIP = this.txtBillingZip.Text;              
-            
+            payment.DonorZIP = this.txtBillingZip.Text;                  
             
             BBNCExtensions.API.Transactions.Donations.RecordDonationReply reply = this.API.Transactions.RecordDonation(payment.GeneratePaymentArgs());
 

@@ -43,9 +43,9 @@ FROM
   LEFT OUTER JOIN dbo.CONSTITUENT childprojectconst on childprojectconst.ID = projectext.ID       -- This is the constituent record that has note of type "Project Bio"
   LEFT OUTER JOIN dbo.USR_COUNTRYEXTENSION countryext on projectext.COUNTRYEXTENSIONID = countryext.ID
   LEFT OUTER JOIN dbo.CONSTITUENT countryconst on countryconst.ID = countryext.ID         -- This is the constituent record that has the note of type "Country Bio"			
---WHERE
-	--ELIGIBILITY = 'Eligible'
-	--AND AVAILABILITY = 'Available'
+WHERE
+	ELIGIBILITY = 'Eligible'
+	AND AVAILABILITY = 'Available'
 			]]>
 		</ViewSQL>
 	</ViewImplementation>

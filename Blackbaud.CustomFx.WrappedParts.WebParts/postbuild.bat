@@ -18,13 +18,12 @@ GOTO :ALWAYS
 
 :CHRISWH
 set target_folder=C:\Blackbaud\Instances\OCM_293\NetCommunity
-set source_folder=C:\Projects\Emerging Markets\Clients\21195_Mission of Mercy\Source code\Blackbaud.CustomFx.WrappedParts.WebParts
+set source_folder=D:\SkyDrive\Projects\Emerging Markets\Clients\21195_Mission of Mercy\Source code\Blackbaud.CustomFx.WrappedParts.WebParts
 
 xcopy "%source_folder%\bin\Blackbaud.CustomFx.WrappedParts.WebParts.dll" "%target_folder%\Bin\" /y /d
 ::make sure the target folders exist
 if not exist "%target_folder%\custom" mkdir "%target_folder%\custom"
 
-xcopy "%source_folder%\*.ascx" "%target_folder%\custom" /y /d
 xcopy "%source_folder%\*.ascx" "%target_folder%\custom" /y /d
 
 set target_folder=C:\Users\chriswh\Desktop\Mom Deploy\NetCommunity
@@ -33,7 +32,6 @@ xcopy "%source_folder%\bin\Blackbaud.CustomFx.WrappedParts.WebParts.dll" "%targe
 ::make sure the target folders exist
 if not exist "%target_folder%\custom" mkdir "%target_folder%\custom"
 
-xcopy "%source_folder%\*.ascx" "%target_folder%\custom" /y /d
 xcopy "%source_folder%\*.ascx" "%target_folder%\custom" /y /d
 GOTO :ALWAYS
 

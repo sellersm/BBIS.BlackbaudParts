@@ -4,7 +4,7 @@ GOTO :ALWAYS
 
 :CHRISWH
 set target_folder=C:\Blackbaud\Instances\OCM_293\NetCommunity
-set source_folder=C:\Projects\Emerging Markets\Clients\21195_Mission of Mercy\Source code\Blackbaud.CustomFx.MissionOfMercy.Catalog
+set source_folder=D:\SkyDrive\Projects\Emerging Markets\Clients\21195_Mission of Mercy\Source code\Blackbaud.CustomFx.MissionOfMercy.Catalog
 
 xcopy "%source_folder%\bin\debug\Blackbaud.CustomFx.MissionOfMercy.Catalog.dll" "%target_folder%\Bin\" /y /d
 
@@ -13,7 +13,7 @@ xcopy "%source_folder%\bin\debug\Blackbaud.CustomFx.MissionOfMercy.Catalog.dll" 
 
 ::to my deploy folder
 set target_folder=C:\Users\chriswh\Desktop\Mom Deploy\NetCommunity
-set source_folder=C:\Projects\Emerging Markets\Clients\21195_Mission of Mercy\Source code\Blackbaud.CustomFx.MissionOfMercy.Catalog
+set source_folder=D:\SkyDrive\Projects\Emerging Markets\Clients\21195_Mission of Mercy\Source code\Blackbaud.CustomFx.MissionOfMercy.Catalog
 
 xcopy "%source_folder%\bin\debug\Blackbaud.CustomFx.MissionOfMercy.Catalog.dll" "%target_folder%\Bin\" /y /d
 

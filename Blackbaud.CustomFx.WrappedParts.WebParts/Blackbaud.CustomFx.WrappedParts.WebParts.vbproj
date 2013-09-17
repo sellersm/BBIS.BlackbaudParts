@@ -22,6 +22,10 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,7 +61,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ABCpdf">
-      <HintPath>..\..\..\..\..\..\Users\chriswh\Desktop\ABCpdf.dll</HintPath>
+      <HintPath>C:\Blackbaud\Instances\OCM_293\NetCommunity\Bin\ABCpdf.dll</HintPath>
     </Reference>
     <Reference Include="BBNCExtensions">
       <SpecificVersion>False</SpecificVersion>

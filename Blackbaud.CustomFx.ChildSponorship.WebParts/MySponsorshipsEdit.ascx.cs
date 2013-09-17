@@ -10,6 +10,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
     public partial class MySponsorshipsEdit : BBNCExtensions.Parts.CustomPartEditorBase
     {
         protected Blackbaud.Web.Content.Portal.PageLink plinkMoreInfoPage;
+        protected Blackbaud.Web.Content.Portal.PageLink plinkEmailPage;
 
         private MySponsorshipsOptions _myContent;
         private MySponsorshipsOptions MyContent
@@ -32,7 +33,13 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if(!IsPostBack)
+            {
+                ddlMerchantAccounts.Items.Clear();
+                BBNCExtensions.API.NetCommunity.Current().Utility.MerchantAccount.LoadListWithMerchantAcccounts(ddlMerchantAccounts, false);
 
+                ddlMerchantAccounts.SelectedValue = MyContent.MerchantAccountID.ToString();   
+            }
         }
 
         public override void OnLoadContent()
@@ -41,8 +48,9 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             {
                 txtDocType.Text = MyContent.ThumbnailNoteType;
                 plinkMoreInfoPage.PageID = MyContent.MoreInfoPageID;
+                plinkEmailPage.PageID = MyContent.EmailPageID;
                 chkDemo.Checked = MyContent.DemoMode;
-                txtMessage.Text = MyContent.ThankYouMessage;                
+                txtMessage.Text = MyContent.ThankYouMessage;             
             }
         }
 
@@ -50,8 +58,10 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
         {
             MyContent.ThumbnailNoteType = this.txtDocType.Text;
             MyContent.MoreInfoPageID = this.plinkMoreInfoPage.PageID;
+            MyContent.EmailPageID = this.plinkEmailPage.PageID;
             MyContent.DemoMode = this.chkDemo.Checked;
             MyContent.ThankYouMessage = this.txtMessage.Text;
+            MyContent.MerchantAccountID = Convert.ToInt16(ddlMerchantAccounts.SelectedValue);
 
             this.Content.SaveContent(MyContent);
             return true;

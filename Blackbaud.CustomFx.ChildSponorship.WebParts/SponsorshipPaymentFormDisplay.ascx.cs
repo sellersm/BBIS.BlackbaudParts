@@ -19,12 +19,13 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
     public partial class SponsorshipPaymentFormDisplay : BBNCExtensions.Parts.CustomPartDisplayBase
     {
         private const string c_REFERRER = "REFERRER";
-        private const bool c_DEBUG = false; //if this is set to true and its my machine then it puts default data in for me 
+        private const bool c_DEBUG = true; //if this is set to true and its my machine then it puts default data in for me 
         private const string c_HEARDABOUTUSROWS = "HEARDABOUTUSROWS";
         private const string c_HEARDABOUTUSSUBROWS = "HEARDABOUTUSSUBROWS";
         private const string c_CARTDATA = "CARTDATA";
 
         private SponsorshipPaymentFormOptions _myContent;
+
         private SponsorshipPaymentFormOptions MyContent
         {
             get
@@ -163,12 +164,12 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             //bug fix to stop the creation of the donation batch
             //since it is already being written directly to the system
             payment.SkipCreateGiftTransaction = true;
-
+            
             payment.DemoMode = MyContent.DemoMode;
             payment.MerchantAcctID = MyContent.MerchantAccountID;
             payment.Bbpid = Utility.GetBbbid(MyContent.MerchantAccountID, this.API.Transactions.MerchantAccounts);
             payment.SkipCardValidation = MyContent.DemoMode;
-
+            
             foreach (DataRow dr in this.CartData.Rows)
             {
                 int designationId = Utility.GetBbncDesignationIdFromSponsorshipOpportunity(dr["Id"].ToString());
@@ -187,7 +188,6 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             else
             {
                 payment.PaymentMethod = BBNCExtensions.API.Transactions.PaymentArgs.ePaymentMethod.CreditCard;
-
                 payment.CreditCardCSC = this.txtCcSecurityCode.Text;
                 payment.CreditCardExpirationMonth = Convert.ToInt32(this.cmbCcExpMonth.SelectedValue);
                 payment.CreditCardExpirationYear = Convert.ToInt32(this.cmbCcExpYear.SelectedValue);
@@ -400,38 +400,46 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
 
         private Guid findConstituent()
         {
-            Guid id = Guid.Empty;
-
-            SearchListLoadRequest request = Const.SearchLists.Constituent.ConstituentSearch.CreateRequest(this.API.AppFxWebServiceProvider);
-            request.SearchListID = new Guid("23c5c603-d7d8-4106-aecc-65392b563887");
-
-            Const.SearchLists.Constituent.ConstituentSearchFilterData data = new Const.SearchLists.Constituent.ConstituentSearchFilterData();
-            data.CONSTITUENTTYPE = 1;
+            Guid id = Guid.Empty;            
             
-            Guid stateID = GetStateID(cmbState.Text);
-
-            if (this.radIsSponsor.SelectedValue == "")
+            if(BBWebPrincipal.Current.User == null)
             {
-                data.LOOKUPID = this.txtSponsorId.Text;
+                SearchListLoadRequest request = Const.SearchLists.Constituent.ConstituentSearch.CreateRequest(this.API.AppFxWebServiceProvider);
+                request.SearchListID = new Guid("23c5c603-d7d8-4106-aecc-65392b563887");
+
+                Const.SearchLists.Constituent.ConstituentSearchFilterData data = new Const.SearchLists.Constituent.ConstituentSearchFilterData();
+                data.CONSTITUENTTYPE = 1;
+            
+                Guid stateID = GetStateID(cmbState.Text);
+
+                if (this.radIsSponsor.SelectedValue == "")
+                {
+                    data.LOOKUPID = this.txtSponsorId.Text;
+                }
+                else
+                {
+                    data.FIRSTNAME = this.txtFirstName.Text;
+                    data.KEYNAME = this.txtLastName.Text;
+                    data.CITY = this.txtCity.Text;
+                    data.POSTCODE = this.txtZip.Text;
+                    data.ADDRESSBLOCK = this.txtAddress.Text;                
+                }
+
+                string[] ids = Const.SearchLists.Constituent.ConstituentSearch.GetIDs(this.API.AppFxWebServiceProvider, data);
+
+                if (ids.Length > 0)
+                {
+                    Guid.TryParse(ids[0], out id);
+                }
+                else
+                {
+                    id = this.createConsitutent(stateID);
+                }
             }
             else
             {
-                data.FIRSTNAME = this.txtFirstName.Text;
-                data.KEYNAME = this.txtLastName.Text;
-                data.CITY = this.txtCity.Text;
-                data.POSTCODE = this.txtZip.Text;
-                data.ADDRESSBLOCK = this.txtAddress.Text;                
-            }
-
-            string[] ids = Const.SearchLists.Constituent.ConstituentSearch.GetIDs(this.API.AppFxWebServiceProvider, data);
-
-            if (ids.Length > 0)
-            {
-                Guid.TryParse(ids[0], out id);
-            }
-            else
-            {
-                id = this.createConsitutent(stateID);
+                var constit = new Blackbaud.Web.Content.Core.Data.ShelbyConstituent(BBWebPrincipal.Current.User);
+                id = new Guid(Blackbaud.Web.Content.Core.Data.ShelbyConstituent.get_GetConstituentsGuid(constit.RecordID));
             }
 
             return id;
@@ -464,7 +472,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
 
                 data.REVENUECONSTITUENTID = constituentId;
                 data.SPONSORSHIPCONSTITUENTID = constituentId;
-                data.SPONSORSHIPOPPORTUNITYIDCHILD = new Guid(dr["Id"].ToString());
+                data.SPONSORSHIPOPPORTUNITYIDCHILD = new Guid(dr["Id"].ToString());                
 
                 if (this.radPayment.SelectedValue == "CC")
                 {
@@ -482,7 +490,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 }
 
                 data.AMOUNT = Convert.ToDecimal(dr["Amount"]);
-
+                
                 data.SPONSORSHIPPROGRAMID = new Guid("32FA809A-5EF1-4A17-862C-7DFE0AB49F19");
                 data.STARTDATE = DateTime.Now;
                 data.REVENUESCHEDULESTARTDATE = DateTime.Now;
@@ -494,7 +502,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 data.BATCHNUMBER = BATCHNUMBER;
                 data.REFERENCE = cmbHearAbout.SelectedItem.Text + " | " + txtHearAboutResponse.Text + " | " + REFERRER;
                 data.CHANNELCODEID = GetChannelCodeID();
-
+                
                 Guid id = Guid.Empty;
                 
                 if(Guid.TryParse(cmbHearAbout.SelectedItem.Attributes["appealid"], out id))
@@ -510,10 +518,13 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 {
                     UpdateBatchNumber(sponsorshipID);
 
-                    Guid solicitorID = Guid.Empty;
-                    Guid.TryParse(ddlHearAboutResponse.SelectedItem.Attributes["data"], out solicitorID);
+                    if(ddlHearAboutResponse.SelectedItem != null)
+                    {
+                        Guid solicitorID = Guid.Empty;
+                        Guid.TryParse(ddlHearAboutResponse.SelectedItem.Attributes["data"], out solicitorID);
 
-                    AddSolicitor(sponsorshipID, solicitorID);
+                        AddSolicitor(sponsorshipID, solicitorID);
+                    }
                 }
             }
         }
@@ -556,7 +567,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
 
             using (SqlConnection con = new SqlConnection(Settings.ConnectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("select ID from CHANNELCODE whre lower(DESCRIPTION) = 'website'", con))
+                using (SqlCommand cmd = new SqlCommand("select ID from CHANNELCODE where lower(DESCRIPTION) = 'website'", con))
                 {
                     cmd.CommandType = CommandType.Text;
 

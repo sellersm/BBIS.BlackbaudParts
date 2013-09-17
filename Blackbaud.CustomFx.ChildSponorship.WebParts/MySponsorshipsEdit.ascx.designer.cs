@@ -20,7 +20,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtDocType;
-                
+        
         /// <summary>
         /// chkDemo control.
         /// </summary>
@@ -29,6 +29,15 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkDemo;
+        
+        /// <summary>
+        /// ddlMerchantAccounts control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlMerchantAccounts;
         
         /// <summary>
         /// txtMessage control.

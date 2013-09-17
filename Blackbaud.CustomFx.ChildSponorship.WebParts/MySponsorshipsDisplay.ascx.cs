@@ -17,6 +17,7 @@ using Blackbaud.AppFx.Fundraising.Catalog.V1_1.WebApiClient.ViewForms.Revenue;
 using Blackbaud.AppFx.Fundraising.Catalog.WebApiClient.DataLists.Revenue;
 using Blackbaud.AppFx.Fundraising.Catalog.WebApiClient.AddForms.Revenue;
 using Blackbaud.AppFx.Fundraising.Catalog.WebApiClient.ViewForms.Revenue;
+using Blackbaud.CustomFx.ChildSponorship.WebParts.Classes;
 
 namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
 {
@@ -64,13 +65,16 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                     sc.FIRSTNAME + ' ' + sc.LASTNAME AS 'Child Name',
                     sc.BIRTHDATE AS 'Birthdate',
                     sc.AGE AS 'Age',
-                    r.ID AS 'RevenueId'
+                    r.ID AS 'RevenueId',
+                    c.NAME as 'SPONSORNAME',
+                    c.LOOKUPID as 'SPONSORID'
                 FROM
                     SPONSORSHIP s
                     INNER JOIN SPONSORSHIPOPPORTUNITY so ON s.SPONSORSHIPOPPORTUNITYID = so.ID
                     INNER JOIN SPONSORSHIPOPPORTUNITYCHILD sc ON so.ID = sc.ID
                     INNER JOIN REVENUESPLIT rs ON s.REVENUESPLITID = rs.ID
                     INNER JOIN REVENUE r ON rs.REVENUEID = r.ID
+                    left join CONSTITUENT C on s.CONSTITUENTID = c.ID
                 WHERE
 	                s.CONSTITUENTID = @Id
 	                AND s.STATUS = 'Active'";
@@ -144,7 +148,22 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 ((LinkButton)e.Row.FindControl("lnkNo")).PostBackUrl = moreInfoUrl;
                 ((LinkButton)e.Row.FindControl("lnkName")).PostBackUrl = moreInfoUrl;
                 ((ImageButton)e.Row.FindControl("imgThumbnail")).ImageUrl = "ImageHandler.ashx?context=sponsorship&type=" + MyContent.ThumbnailNoteType + "&id=" + row["Id"];
-                ((ImageButton)e.Row.FindControl("imgThumbnail")).PostBackUrl = moreInfoUrl;                
+                ((ImageButton)e.Row.FindControl("imgThumbnail")).PostBackUrl = moreInfoUrl;    
+                
+                if(e.Row.FindControl("lnkEmail") != null)
+                {
+                    var lnkEmail = (HyperLink)e.Row.FindControl("lnkEmail");
+
+                    EncryptedQueryString args = new EncryptedQueryString();
+                    args["CHILDID"] = row["Child No"].ToString();
+                    args["CHILDNAME"] = row["Child Name"].ToString();
+                    args["SPONSORID"] = row["SPONSORID"].ToString(); //need to get this
+                    args["SPONSORNAME"] = row["SPONSORNAME"].ToString(); //need to get this
+
+                    string emailUrl = string.Concat(Utility.GetBBISPageUrl(MyContent.EmailPageID), string.Format("?args={0}", args.ToString()));
+
+                    lnkEmail.NavigateUrl = emailUrl;
+                }
             }
         }
 
@@ -210,7 +229,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
         {
             DataFormLoadRequest request = PaymentAddForm.CreateLoadRequest(this.API.AppFxWebServiceProvider);
             request.FormID = new Guid("3e5b7b99-fb01-49d4-9020-c953006b7d0f");
-
+            
             List<string> giftsToProcess = new List<string>();
             if (ViewState["selectedSponsorships"] != null)
             {
@@ -251,7 +270,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 data.CREDITTYPECODEID = Utility.GetCrmCC(this.cmbCcType.SelectedValue);
                 data.RECEIPTAMOUNT = amount;                
                 data.SOURCECODE = "BBIS";
-
+                
                 data.Save(this.API.AppFxWebServiceProvider);
 
                 runningTotal += amount;
@@ -263,11 +282,14 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
 
         private bool processPayment()
         {
+            var opts = MyContent;
+
             BBPSPaymentInfo payment = new BBPSPaymentInfo();
-            payment.DemoMode = MyContent.DemoMode;
-            payment.MerchantAcctID = 14;
-            payment.Bbpid = Utility.GetBbbid(14, this.API.Transactions.MerchantAccounts);
-            payment.SkipCardValidation = false;            
+            payment.SkipCreateGiftTransaction = true;
+            payment.DemoMode = opts.DemoMode;
+            payment.MerchantAcctID = opts.MerchantAccountID;
+            payment.Bbpid = Utility.GetBbbid(opts.MerchantAccountID, this.API.Transactions.MerchantAccounts);
+            payment.SkipCardValidation = MyContent.DemoMode;            
             payment.AppealID = 1;
             payment.Comments = "";
 
@@ -282,7 +304,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             }
 
             decimal enteredAmount = Convert.ToDecimal(this.txtAmount.Text);
-            decimal amount = enteredAmount / giftsToProcess.Count;
+            decimal amount = enteredAmount / (giftsToProcess.Count.Equals(0) ? 1 : giftsToProcess.Count);
             decimal runningTotal = 0;
             amount = Math.Round(amount, 2);
 
@@ -297,29 +319,35 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 payment.AddDesignationInfo(amount, "BBIS Child Sponsorship Transaction", designationId);
             }
 
-            payment.PaymentMethod = BBNCExtensions.API.Transactions.PaymentArgs.ePaymentMethod.CreditCard;
-            payment.CreditCardCSC = this.txtCcSecurityCode.Text;
-            payment.CreditCardExpirationMonth = Convert.ToInt32(this.cmbCcExpMonth.SelectedValue);
-            payment.CreditCardExpirationYear = Convert.ToInt32(this.cmbCcExpYear.SelectedValue);
-            payment.CreditCardHolderName = this.txtCcName.Text;
-            payment.CreditCardNumber = this.txtCcNumber.Text;
-            payment.CreditCardType = (BBNCExtensions.Interfaces.Services.CreditCardType)Enum.Parse(typeof(BBNCExtensions.Interfaces.Services.CreditCardType), this.cmbCcType.SelectedValue);
+            if (this.radPayment.SelectedValue == "Check")
+            {
+                payment.PaymentMethod = BBNCExtensions.API.Transactions.PaymentArgs.ePaymentMethod.Check;
+            }
+            else
+            {
+                payment.PaymentMethod = BBNCExtensions.API.Transactions.PaymentArgs.ePaymentMethod.CreditCard;
+                payment.CreditCardCSC = this.txtCcSecurityCode.Text;
+                payment.CreditCardExpirationMonth = Convert.ToInt32(this.cmbCcExpMonth.SelectedValue);
+                payment.CreditCardExpirationYear = Convert.ToInt32(this.cmbCcExpYear.SelectedValue);
+                payment.CreditCardHolderName = this.txtCcName.Text;
+                payment.CreditCardNumber = this.txtCcNumber.Text; //VIOLATION of PCI Compliance - as a developer we can by no means ever write code that consumes someones credit card number
+                payment.CreditCardType = (BBNCExtensions.Interfaces.Services.CreditCardType)Enum.Parse(typeof(BBNCExtensions.Interfaces.Services.CreditCardType), this.cmbCcType.SelectedValue);
+                payment.DonorStreetAddress = this.txtBillingAddress.Text;
+                payment.DonorCity = this.txtBillingCity.Text;
+                payment.DonorStateProvince = this.cmbBillingCountry.SelectedValue == "US" ? this.cmbBillingState.SelectedValue : this.txtBillingRegion.Text;
+                payment.DonorZIP = this.txtBillingZip.Text;                
+            }
 
-            payment.DonorStreetAddress = this.txtBillingAddress.Text;
-            payment.DonorCity = this.txtBillingCity.Text;
-            payment.DonorStateProvince = this.cmbBillingCountry.SelectedValue == "US" ? this.cmbBillingState.SelectedValue : this.txtBillingRegion.Text;
-            payment.DonorZIP = this.txtBillingZip.Text;
+            BBNCExtensions.API.Transactions.Donations.RecordDonationReply reply = this.API.Transactions.RecordDonation(payment.GeneratePaymentArgs());
 
-            BBNCExtensions.API.Transactions.Donations.RecordDonationReply reply = this.API.Transactions.RecordDonation(payment.GeneratePaymentArgs());            
             if (!payment.InterpretPaymentReply(reply).Success)
             {
-                this.lblSummary.Text = "Payment of " + enteredAmount.ToString("c") + " accepted.";
                 this.lblError.Visible = true;
                 this.lblError.Text = payment.InterpretPaymentReply(reply).Message;
                 return false;
             }
             else
-            {
+            {                
                 return true;
             }
         }

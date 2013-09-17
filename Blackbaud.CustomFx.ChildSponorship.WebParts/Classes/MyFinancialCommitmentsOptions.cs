@@ -7,6 +7,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
         #region Fields
         private bool _demoMode;
         private string _thankYouMessage;
+        private int _merchantAccountID;
         #endregion
 
         #region Properties
@@ -20,6 +21,11 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
         {
             get { return _thankYouMessage; }
             set { _thankYouMessage = value; }
+        }
+        public int MerchantAccountID
+        {
+            get { return this._merchantAccountID; }
+            set { this._merchantAccountID = value; }
         }
         #endregion
     }

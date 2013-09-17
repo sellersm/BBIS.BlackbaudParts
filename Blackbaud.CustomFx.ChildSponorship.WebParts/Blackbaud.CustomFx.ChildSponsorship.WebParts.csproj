@@ -118,6 +118,8 @@
     <Content Include="ChildProfileEdit.ascx" />
     <Content Include="CountryProfileDisplay.ascx" />
     <Content Include="CountryProfileEdit.ascx" />
+    <Content Include="EmailAChildDisplay.ascx" />
+    <Content Include="EmailAChildEdit.ascx" />
     <Content Include="MyFinancialCommitmentsDisplay.ascx" />
     <Content Include="MyFinancialCommitmentsEdit.ascx" />
     <Content Include="MySponsorshipsDisplay.ascx" />
@@ -156,6 +158,8 @@
     </Compile>
     <Compile Include="Classes\ChildProfileOptions.cs" />
     <Compile Include="Classes\ConfirmationEmailOptions.cs" />
+    <Compile Include="Classes\EmailAChildOptions.cs" />
+    <Compile Include="Classes\EncryptedQueryString.cs" />
     <Compile Include="Classes\MyTransactionManagerOptions.cs" />
     <Compile Include="CountryProfileDisplay.ascx.cs">
       <DependentUpon>CountryProfileDisplay.ascx</DependentUpon>
@@ -172,6 +176,20 @@
       <DependentUpon>CountryProfileEdit.ascx</DependentUpon>
     </Compile>
     <Compile Include="Classes\CountryProfileOptions.cs" />
+    <Compile Include="EmailAChildDisplay.ascx.cs">
+      <DependentUpon>EmailAChildDisplay.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmailAChildDisplay.ascx.designer.cs">
+      <DependentUpon>EmailAChildDisplay.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="EmailAChildEdit.ascx.cs">
+      <DependentUpon>EmailAChildEdit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmailAChildEdit.ascx.designer.cs">
+      <DependentUpon>EmailAChildEdit.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ImageHandler.ashx.cs">
       <DependentUpon>ImageHandler.ashx</DependentUpon>
     </Compile>

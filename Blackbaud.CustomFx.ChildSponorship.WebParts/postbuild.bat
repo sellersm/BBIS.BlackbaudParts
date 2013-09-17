@@ -18,7 +18,7 @@ GOTO :ALWAYS
 
 :CHRISWH
 set target_folder=C:\Blackbaud\Instances\OCM_293\NetCommunity
-set source_folder=C:\Projects\Emerging Markets\Clients\21195_Mission of Mercy\Source code\Blackbaud.CustomFx.ChildSponorship.WebParts
+set source_folder=D:\SkyDrive\Projects\Emerging Markets\Clients\21195_Mission of Mercy\Source code\Blackbaud.CustomFx.ChildSponorship.WebParts
 
 xcopy "%source_folder%\bin\*.dll" "%target_folder%\Bin\" /y /d
 ::make sure the target folders exist
@@ -29,16 +29,17 @@ xcopy "%source_folder%\*edit*.ascx" "%target_folder%\custom\ChildSponsorship" /y
 xcopy "%source_folder%\*.ashx" "%target_folder%\custom\ChildSponsorship" /y /d
 
 ::to my deploy folder
-set target_folder=C:\Users\chriswh\Desktop\Mom Deploy\NetCommunity
-set source_folder=C:\Projects\Emerging Markets\Clients\21195_Mission of Mercy\Source code\Blackbaud.CustomFx.ChildSponorship.WebParts
+set target_folder=C:\DEPLOY\OCM\NetCommunity
 
-xcopy "%source_folder%\bin\*.dll" "%target_folder%\Bin\" /y /d
+xcopy "%source_folder%\bin\*.dll" "%target_folder%\Bin\" /y
 ::make sure the target folders exist
-if not exist "%target_folder%\custom\ChildSponsorship" mkdir "%target_folder%\ChildSponsorship"
+if not exist "%target_folder%\custom\ChildSponsorship" mkdir "%target_folder%\custom\ChildSponsorship"
 
-xcopy "%source_folder%\*display*.ascx" "%target_folder%\custom\ChildSponsorship" /y /d
-xcopy "%source_folder%\*edit*.ascx" "%target_folder%\custom\ChildSponsorship" /y /d
-xcopy "%source_folder%\*.ashx" "%target_folder%\custom\ChildSponsorship" /y /d
+xcopy "%source_folder%\*display*.ascx" "%target_folder%\custom\ChildSponsorship" /y 
+xcopy "%source_folder%\*edit*.ascx" "%target_folder%\custom\ChildSponsorship" /y 
+xcopy "%source_folder%\*.ashx" "%target_folder%\custom\ChildSponsorship" /y 
+
+"C:\Program Files\7-Zip\7z.exe" a -tzip "C:\DEPLOY\OCM\NetCommunity.zip" "C:\DEPLOY\OCM\NetCommunity"
 
 GOTO :ALWAYS
 

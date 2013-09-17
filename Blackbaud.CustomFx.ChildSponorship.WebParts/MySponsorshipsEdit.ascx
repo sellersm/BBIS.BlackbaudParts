@@ -6,12 +6,24 @@
         <td><asp:TextBox ID="txtDocType" runat="server" /></td>
     </tr>
     <tr>
-        <td>More Info Target Page</td>
+        <td>More Info Page ID:</td>
         <td><uc:PageLink ID="plinkMoreInfoPage" runat="server" /></td>
+    </tr>
+    <tr>
+        <td>Email Page ID:</td>
+        <td><uc:PageLink ID="plinkEmailPage" runat="server" /></td>
     </tr>
     <tr>
         <td>Demo Mode:</td>
         <td><asp:CheckBox ID="chkDemo" runat="server" /></td>
+    </tr>
+    <tr>
+        <td>
+            Merchant Account:
+        </td>
+        <td>
+            <asp:DropDownList ID="ddlMerchantAccounts" runat="server" />
+        </td>
     </tr>
     <tr>
         <td valign="top">Thank You Message:</td>

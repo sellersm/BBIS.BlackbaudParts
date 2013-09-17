@@ -47,28 +47,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 {
                     this.currentPage = 0;
                     
-
-                    if (Request.QueryString["AGE"] != null)
-                    {
-                        AGE = Request.QueryString["AGE"].ToString();
-                    }
-
-                    if (Request.QueryString["GENDER"] != null)
-                    {
-                        GENDER = Request.QueryString["GENDER"].ToString();
-                    }
-
-                    if (Request.QueryString["COUNTRY"] != null)
-                    {
-                        COUNTRY = Request.QueryString["COUNTRY"].ToString();
-                    }
-
-                    if (Request.QueryString["CHOOSEFORME"] != null)
-                    {
-                        CHOOSEFORME = Request.QueryString["CHOOSEFORME"].ToString();
-                    }
-
-                    this.bindSearchResults();
+                    this.bindSearchResults(true);  //force db refresh because filter values may have changed
                 }
                 catch (Exception ex)
                 {
@@ -95,8 +74,45 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             }
         }
 
+        public int maxPage
+        {
+            get
+            {
+                // look for max page in ViewState
+                object o = this.ViewState["_MaxPage"];
+                if (o == null)
+                    return 1; // default page index of 0
+                else
+                    return (int)o;
+            }
+            set
+            {
+                this.ViewState["_MaxPage"] = value;
+            }
+        }
+
         private DataTable GetChildrenDataSet()
         {
+            if (Request.QueryString["AGE"] != null)
+            {
+                AGE = Request.QueryString["AGE"].ToString();
+            }
+
+            if (Request.QueryString["GENDER"] != null)
+            {
+                GENDER = Request.QueryString["GENDER"].ToString();
+            }
+
+            if (Request.QueryString["COUNTRY"] != null)
+            {
+                COUNTRY = Request.QueryString["COUNTRY"].ToString();
+            }
+
+            if (Request.QueryString["CHOOSEFORME"] != null)
+            {
+                CHOOSEFORME = Request.QueryString["CHOOSEFORME"].ToString();
+            }
+
             DataTable dt = new DataTable();
             PagedDataSource page = new PagedDataSource();
             page.DataSource = dt.DefaultView;
@@ -139,11 +155,11 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             return dt;
         }
 
-        private int bindSearchResults(bool fromEvent)
+        private int bindSearchResults(bool fromEvent, bool forceRefresh = false)
         {
             DataTable dt = null;
             
-            if(fromEvent)
+            if(fromEvent && !forceRefresh)
             {
                 dt = BBSession.Retrieve<DataTable>("CHILDREN");
             }
@@ -186,9 +202,9 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             return dt.Rows.Count;
         }
 
-        private int bindSearchResults()
+        private int bindSearchResults(bool forceRefresh = false)
         {
-            return bindSearchResults(false);
+            return bindSearchResults(false, forceRefresh);
         }
 
         private void bindNav(int totalRecords)
@@ -200,6 +216,8 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 numberofPages++;
             }
 
+            maxPage = numberofPages;
+
             int currentMax = (this.currentPage + 1) * MyContent.ResultsPerPage;
             int currentMin = (currentMax - MyContent.ResultsPerPage) + 1;
 
@@ -207,11 +225,26 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             if (currentMax >= totalRecords)
             {
                 currentMax = totalRecords;
-                this.lnkNext.Enabled = false;
+                this.lnkNext.Enabled = false;                
             }
             else
             {
                 this.lnkNext.Enabled = true;
+            }
+
+            if(numberofPages == 1)
+            {
+                this.lnkFirst.Enabled = false;
+                this.lnkLast.Enabled = false;   
+                this.lnkNext.Enabled = false;
+                this.lnkPrevious.Enabled = false;
+            }
+            else
+            {
+                this.lnkFirst.Enabled = true;
+                this.lnkLast.Enabled = true;
+                this.lnkNext.Enabled = true;
+                this.lnkPrevious.Enabled = true;
             }
 
             this.lblCount.Text = currentMin.ToString() + " - " + currentMax.ToString() + " of " + totalRecords.ToString();
@@ -245,7 +278,11 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
 
         protected void lnkNext_Click(object sender, EventArgs e)
         {
-            this.currentPage++;
+            if(currentPage < (maxPage - 1))
+            {
+                this.currentPage++;
+            }
+
             this.bindSearchResults(true);
         }
 
@@ -266,7 +303,16 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
 
         protected void lnkLast_Click(object sender, EventArgs e)
         {
-            this.currentPage = (this.bindSearchResults() / MyContent.ResultsPerPage);
+            var resultsCount = this.bindSearchResults();
+            var resultsPerPage = MyContent.ResultsPerPage;
+            var currPage = resultsCount / resultsPerPage;
+
+            if(resultsCount % resultsPerPage == 0)
+            {
+                currPage -= 1;
+            }
+
+            this.currentPage = currPage;
             this.bindSearchResults(true);
         }
 

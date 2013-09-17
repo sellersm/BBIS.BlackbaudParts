@@ -1,4 +1,35 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="MySponsorshipsDisplay.ascx.cs" Inherits="Blackbaud.CustomFx.ChildSponsorship.WebParts.MySponsorshipsDisplay" %>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#<%= radPayment.ClientID %>").change(function () {
+            var enable = false;
+
+            if ($("#<%= radPayment.ClientID %>").find('input:checked').val() == "CC") {
+                $("#tblCC").css("display", "table");
+                $("#tblCheck").css("display", "none");
+                enable = true;
+            } else {
+                $("#tblCC").css("display", "none");
+                $("#tblCheck").css("display", "table");
+                $("#<%= radCcRecurrence.ClientID %>").val("OneTimeGift");
+            }
+
+            ValidatorEnable($("#<%= reqCcName.ClientID %>")[0], enable);
+            ValidatorEnable($("#<%= RequiredFieldValidator12.ClientID %>")[0], enable);
+            ValidatorEnable($("#<%= RequiredFieldValidator15.ClientID %>")[0], enable);
+            ValidatorEnable($("#<%= RequiredFieldValidator16.ClientID %>")[0], enable);
+            ValidatorEnable($("#<%= RequiredFieldValidator17.ClientID %>")[0], enable);
+            ValidatorEnable($("#<%= RequiredFieldValidator18.ClientID %>")[0], enable);
+        });
+    });
+</script>
+<style type="text/css">
+    .Validation
+    {
+        color: Red;
+        font-weight: bold;
+    }
+</style>
 <asp:MultiView ID="mvMain" runat="server" ActiveViewIndex="0">
     <asp:View ID="viewSponsorships" runat="server">
         <asp:GridView ID="gvSponsorships" runat="server" AutoGenerateColumns="False" 
@@ -10,6 +41,7 @@
                 <ItemTemplate>
                     <asp:LinkButton ID="lnkPayments" runat="server" Text="View Payments" CommandName="ViewPayments" CommandArgument='<%#Eval("RevenueId") %>' /><br /><br />
                     <asp:LinkButton ID="lnkPay" runat="server" Text="Make Payment" CommandName="MakePayment" CommandArgument='<%#Eval("RevenueId") %>' /><br /><br />
+                    <asp:HyperLink ID="lnkEmail" runat="server" Text="Write a Letter" />
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField>
@@ -447,79 +479,164 @@
                 </td>
             </tr>
             <tr>
-                <td class="NCC_ScholarshipApp_subSectionHeader">Credit Card Information:</td>
-            </tr>                    
-            <tr>                            
                 <td>
-                    <table>
+                    <span class="BBFieldCaption ChildSearchFieldCaptionBold">Please Choose Your Payment
+                        Method</span> <span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
+                    <asp:RadioButtonList ID="radPayment" runat="server" RepeatDirection="Horizontal">
+                        <asp:ListItem Value="CC" Selected="True">Credit Card</asp:ListItem>
+                        <asp:ListItem Value="Check">Check</asp:ListItem>
+                    </asp:RadioButtonList>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table id="tblCC">
                         <tr>
-                            <td class="style1">
-                                <span id="PC1689_ctl00_lblCcName" class="BBFieldCaption ChildSearchFieldCaption">Name on Card</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
-                            </td>
-                            <td>
-                                <asp:TextBox ID="txtCcName" runat="server" Width="175px" CssClass="BBFieldControlCell ChildSearchFieldControlCell_long" MaxLength="50" />
-                                <asp:RequiredFieldValidator ID="reqCcName" runat="server" ControlToValidate="txtCcName" Text="*" ErrorMessage="Credit Card Name" ValidationGroup="Checkout" />                                                            
+                            <td class="NCC_ScholarshipApp_subSectionHeader">Credit Card Information:
                             </td>
                         </tr>
                         <tr>
-                            <td class="style1">
-                                <span id="PC1689_ctl00_lblCcNumber" class="BBFieldCaption ChildSearchFieldCaption">Card Number</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
-                            </td>
                             <td>
-                                <asp:TextBox ID="txtCcNumber" runat="server" Width="150px" CssClass="BBFieldControlCell ChildSearchFieldControlCell_long" MaxLength="50" />
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator12" runat="server" ControlToValidate="txtCcNumber" Text="*" ErrorMessage="Credit Card Number" ValidationGroup="Checkout" />                                                            
+                                <table>
+                                    <tr>
+                                        <td class="style1" colspan="2">
+                                            <span id="PC1689_ctl00_lblCcName" class="BBFieldCaption ChildSearchFieldCaption">Name
+                                                    on Card</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
+                                        </td>
+                                        <td>
+                                            <asp:TextBox ID="txtCcName" runat="server" Width="175px" CssClass="BBFieldControlCell ChildSearchFieldControlCell_long"
+                                                MaxLength="50" />
+                                            <asp:RequiredFieldValidator ID="reqCcName" runat="server" ControlToValidate="txtCcName"
+                                                Text="*" ErrorMessage="Credit Card Name" ValidationGroup="Checkout" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="style1" colspan="2">
+                                            <span id="PC1689_ctl00_lblCcNumber" class="BBFieldCaption ChildSearchFieldCaption">Card
+                                                    Number</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
+                                        </td>
+                                        <td>
+                                            <asp:TextBox ID="txtCcNumber" runat="server" Width="150px" CssClass="BBFieldControlCell ChildSearchFieldControlCell_long"
+                                                MaxLength="50" />
+                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator12" runat="server" ControlToValidate="txtCcNumber"
+                                                Text="*" ErrorMessage="Credit Card Number" ValidationGroup="Checkout" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="style1" colspan="2">
+                                            <span id="PC1689_ctl00_lblCcSecurityCode" class="BBFieldCaption ChildSearchFieldCaption">Security Code</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
+                                        </td>
+                                        <td>
+                                            <asp:TextBox ID="txtCcSecurityCode" runat="server" Width="40px" CssClass="BBFieldControlCell ChildSearchFieldControlCell_long"
+                                                MaxLength="10" />
+                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator15" runat="server" ControlToValidate="txtCcSecurityCode"
+                                                Text="*" ErrorMessage="Credit Card Security Code" ValidationGroup="Checkout" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="style1" colspan="2">
+                                            <span id="PC1689_ctl00_lblCcType" class="BBFieldCaption ChildSearchFieldCaption">Credit
+                                                    Card Type</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
+                                        </td>
+                                        <td>
+                                            <asp:DropDownList ID="cmbCcType" runat="server">
+                                                <asp:ListItem Value="">-- Select --</asp:ListItem>
+                                                <asp:ListItem Value="MasterCard">MasterCard</asp:ListItem>
+                                                <asp:ListItem Value="Visa">Visa</asp:ListItem>
+                                                <asp:ListItem Value="AmericanExpress">American Express</asp:ListItem>
+                                                <asp:ListItem Value="Discover">Discover</asp:ListItem>
+                                            </asp:DropDownList>
+                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator16" runat="server" ControlToValidate="cmbCcType"
+                                                Text="*" ErrorMessage="Credit Card Type" ValidationGroup="Checkout" />
+                                                    
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="style1" colspan="2">
+                                            <span id="PC1689_ctl00_lblCcExpDate" class="BBFieldCaption ChildSearchFieldCaption">Expiration Date</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
+                                        </td>
+                                        <td>
+                                            <asp:DropDownList ID="cmbCcExpMonth" runat="server">
+                                                <asp:ListItem Value="">-- Month --</asp:ListItem>
+                                                <asp:ListItem Value="01">01</asp:ListItem>
+                                                <asp:ListItem Value="02">02</asp:ListItem>
+                                                <asp:ListItem Value="03">03</asp:ListItem>
+                                                <asp:ListItem Value="04">04</asp:ListItem>
+                                                <asp:ListItem Value="05">05</asp:ListItem>
+                                                <asp:ListItem Value="06">06</asp:ListItem>
+                                                <asp:ListItem Value="07">07</asp:ListItem>
+                                                <asp:ListItem Value="08">08</asp:ListItem>
+                                                <asp:ListItem Value="09">09</asp:ListItem>
+                                                <asp:ListItem Value="10">10</asp:ListItem>
+                                                <asp:ListItem Value="11">11</asp:ListItem>
+                                                <asp:ListItem Value="12">12</asp:ListItem>
+                                            </asp:DropDownList>
+                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator17" runat="server" ControlToValidate="cmbCcExpMonth"
+                                                Text="*" ErrorMessage="Credit Card Expiration Month" ValidationGroup="Checkout" />
+                                                    
+                                                <asp:DropDownList ID="cmbCcExpYear" runat="server">
+                                                </asp:DropDownList>
+                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator18" runat="server" ControlToValidate="cmbCcExpYear"
+                                                Text="*" ErrorMessage="Credit Card Expiration Month" ValidationGroup="Checkout" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="style1" colspan="2">
+                                            <span id="PC1689_ctl00_lblCcRecurrence" class="BBFieldCaption ChildSearchFieldCaption">Select Your Sponsorship Recurrence</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <asp:RadioButtonList ID="radCcRecurrence" runat="server">
+                                                <asp:ListItem Value="OneTimeGift">One Time Sponsorship Payment</asp:ListItem>
+                                                <asp:ListItem Value="3">Monthly</asp:ListItem>
+                                                <asp:ListItem Value="2">Quarterly</asp:ListItem>
+                                                <asp:ListItem Value="0">Annually</asp:ListItem>
+                                            </asp:RadioButtonList>
+                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator19" runat="server" ControlToValidate="radCcRecurrence"
+                                                Text="*" ErrorMessage="Payment Recurrence" ValidationGroup="Checkout" />
+                                        </td>
+                                        <td>
+                                            <span id="PC1689_ctl00_reqVldCcRecurrence" style="color: Red; visibility: hidden;">&nbsp;*</span>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <table id="tblCheck" style="display: none;">
+                        <tr>
+                            <td class="NCC_ScholarshipApp_subSectionHeader">Check Payment Information:
                             </td>
                         </tr>
                         <tr>
-                            <td class="style1">
-                                <span id="PC1689_ctl00_lblCcSecurityCode" class="BBFieldCaption ChildSearchFieldCaption">Security Code</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
-                            </td>
                             <td>
-                                <asp:TextBox ID="txtCcSecurityCode" runat="server" Width="40px" CssClass="BBFieldControlCell ChildSearchFieldControlCell_long" MaxLength="10" />
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator15" runat="server" ControlToValidate="txtCcSecurityCode" Text="*" ErrorMessage="Credit Card Security Code" ValidationGroup="Checkout" />                                                            
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="style1">
-                                <span id="PC1689_ctl00_lblCcType" class="BBFieldCaption ChildSearchFieldCaption">Credit Card Type</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
-                            </td>
-                            <td>
-                                <asp:DropDownList ID="cmbCcType" runat="server">
-                                    <asp:ListItem value="">-- Select --</asp:ListItem>
-			                        <asp:ListItem value="MasterCard">MasterCard</asp:ListItem>
-			                        <asp:ListItem value="Visa">Visa</asp:ListItem>
-			                        <asp:ListItem value="AmericanExpress">American Express</asp:ListItem>
-			                        <asp:ListItem value="Discover">Discover</asp:ListItem>
-                                </asp:DropDownList>
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator16" runat="server" ControlToValidate="cmbCcType" Text="*" ErrorMessage="Credit Card Type" ValidationGroup="Checkout" />
-                                </span>
-                        </td></tr>
-                        <tr>
-                            <td class="style1">
-                                <span id="PC1689_ctl00_lblCcExpDate" class="BBFieldCaption ChildSearchFieldCaption">Expiration Date</span><span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
-                            </td>
-                            <td>
-                                <asp:DropDownList ID="cmbCcExpMonth" runat="server">
-                                    <asp:ListItem value="">-- Month --</asp:ListItem>
-			                        <asp:ListItem value="01">01</asp:ListItem>
-			                        <asp:ListItem value="02">02</asp:ListItem>
-			                        <asp:ListItem value="03">03</asp:ListItem>
-			                        <asp:ListItem value="04">04</asp:ListItem>
-			                        <asp:ListItem value="05">05</asp:ListItem>
-			                        <asp:ListItem value="06">06</asp:ListItem>
-			                        <asp:ListItem value="07">07</asp:ListItem>
-			                        <asp:ListItem value="08">08</asp:ListItem>
-			                        <asp:ListItem value="09">09</asp:ListItem>
-			                        <asp:ListItem value="10">10</asp:ListItem>
-			                        <asp:ListItem value="11">11</asp:ListItem>
-			                        <asp:ListItem value="12">12</asp:ListItem>
-                                </asp:DropDownList>
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator17" runat="server" ControlToValidate="cmbCcExpMonth" Text="*" ErrorMessage="Credit Card Expiration Month" ValidationGroup="Checkout" />
-                                </span>
-                                <asp:DropDownList ID="cmbCcExpYear" runat="server">
-                                                            
-                                </asp:DropDownList>
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator18" runat="server" ControlToValidate="cmbCcExpYear" Text="*" ErrorMessage="Credit Card Expiration Month" ValidationGroup="Checkout" />
+                                <table>
+                                    <tr>
+                                        <td>Make check payable to:
+                                        </td>
+                                        <td>Mission of Mercy
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mail your check to:
+                                        </td>
+                                        <td>Mission of Mercy
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>P.O. Box 62600
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Colorado Springs, CO 80962
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                     </table>

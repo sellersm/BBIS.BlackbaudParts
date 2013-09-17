@@ -11,7 +11,12 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if(!IsPostBack)
+            {
+                //clear the ddl and use the oob api call
+                ddlMerchantAccounts.Items.Clear();
+                BBNCExtensions.API.NetCommunity.Current().Utility.MerchantAccount.LoadListWithMerchantAcccounts(ddlMerchantAccounts, false, 0);
+            }
         }
 
         public override void OnLoadContent()
@@ -23,6 +28,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 {
                     this.chkDemo.Checked = options.DemoMode;
                     this.txtMessage.Text = options.ThankYouMessage;
+                    ddlMerchantAccounts.SelectedValue = options.MerchantAccountID.ToString();
                 }
             }
         }
@@ -32,6 +38,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             MyFinancialCommitmentsOptions options = new MyFinancialCommitmentsOptions();
             options.DemoMode = this.chkDemo.Checked;
             options.ThankYouMessage = this.txtMessage.Text;
+            options.MerchantAccountID = Convert.ToInt16(ddlMerchantAccounts.SelectedValue);
             this.Content.SaveContent(options);
             return true;
         }
