@@ -272,7 +272,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 data.SOURCECODE = "BBIS";
                 
                 data.Save(this.API.AppFxWebServiceProvider);
-
+                
                 runningTotal += amount;
             }
 
@@ -292,7 +292,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
             payment.SkipCardValidation = MyContent.DemoMode;            
             payment.AppealID = 1;
             payment.Comments = "";
-
+            
             List<string> giftsToProcess = new List<string>();
             if (ViewState["selectedSponsorships"] != null)
             {
@@ -422,6 +422,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 this.cmbBillingState.Enabled = true;
                 this.reqBillingState.Enabled = true;
                 this.reqBillingRegion.Enabled = false;
+                lblProvinceRegionRequired1.Visible = false;
             }
             else
             {
@@ -429,6 +430,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 this.cmbBillingState.Enabled = false;
                 this.reqBillingState.Enabled = false;
                 this.reqBillingRegion.Enabled = true;
+                lblProvinceRegionRequired1.Visible = true;
             }
         }
 

@@ -332,6 +332,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 this.cmbBillingState.Enabled = true;
                 this.reqBillingState.Enabled = true;
                 this.reqBillingRegion.Enabled = false;
+                lblProvinceRegionRequired1.Visible = false;
             }
             else
             {
@@ -339,6 +340,7 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                 this.cmbBillingState.Enabled = false;
                 this.reqBillingState.Enabled = false;
                 this.reqBillingRegion.Enabled = true;
+                lblProvinceRegionRequired1.Visible = false;
             }
         }
 

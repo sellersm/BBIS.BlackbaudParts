@@ -4,13 +4,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         //hide the billing table and rfvs for the first time
-        $("#tblBilling").css("display", "none");
-        ValidatorEnable($("#<%= RequiredFieldValidator14.ClientID %>")[0], false);
-        ValidatorEnable($("#<%= RequiredFieldValidator4.ClientID %>")[0], false);
-        ValidatorEnable($("#<%= RequiredFieldValidator5.ClientID %>")[0], false);
-        ValidatorEnable($("#<%= reqBillingState.ClientID %>")[0], false);
-        ValidatorEnable($("#<%= reqBillingRegion.ClientID %>")[0], false);
-        ValidatorEnable($("#<%= RequiredFieldValidator13.ClientID %>")[0], false);
+        BillingDisplay();
 
 
         $("#<%= radIsSponsor.ClientID %>").change(function () {
@@ -24,6 +18,10 @@
         });
 
         $("#<%= radBilling.ClientID %>").change(function () {
+            BillingDisplay();
+        });
+
+        function BillingDisplay() {
             var enabled = true;
             var display = "table";
 
@@ -39,7 +37,7 @@
             ValidatorEnable($("#<%= reqBillingState.ClientID %>")[0], enabled);
             ValidatorEnable($("#<%= reqBillingRegion.ClientID %>")[0], enabled);
             ValidatorEnable($("#<%= RequiredFieldValidator13.ClientID %>")[0], enabled);
-        });
+        }
 
         $("#<%= radPayment.ClientID %>").change(function () {
             var enable = false;
@@ -475,7 +473,8 @@
                                                 </tr>                                                
                                                 <tr>
                                                     <td>
-                                                        <span id="PC1689_ctl00_lblProvinceRegion" class="BBFieldCaption ChildSearchFieldCaption">Province/Region: *</span>
+                                                        <span id="PC1689_ctl00_lblProvinceRegion" class="BBFieldCaption ChildSearchFieldCaption">Province/Region:</span>
+                                                        <asp:Label ID="lblProvinceRegionRequired1" runat="server" CssClass="BBFieldCaption ChildSearchFieldCaption" Text="*" Visible="false" />
                                                     </td>
                                                     <td class="style4">
                                                         <asp:TextBox ID="txtRegion" runat="server" Enabled="false"></asp:TextBox>
@@ -535,8 +534,7 @@
         </tr>
         <tr>
             <td class="style1">
-                <asp:UpdatePanel ID="updateBilling" runat="server">
-                    <ContentTemplate>
+           
                         <table>
                             <tr>
                                 <td>
@@ -899,7 +897,8 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <span class="BBFieldCaption ChildSearchFieldCaption">Province/Region: *</span>
+                                                <span class="BBFieldCaption ChildSearchFieldCaption">Province/Region:</span>
+                                                        <asp:Label ID="lblProvinceRegionRequired2" runat="server" CssClass="BBFieldCaption ChildSearchFieldCaption" Text="*" Visible="false" />
                                             </td>
                                             <td class="style4">
                                                 <asp:TextBox ID="txtBillingRegion" runat="server" Enabled="False"></asp:TextBox>
@@ -923,8 +922,7 @@
                                 </td>
                             </tr>
                         </table>
-                    </ContentTemplate>
-                </asp:UpdatePanel>
+                    
             </td>
         </tr>
         <tr>
@@ -964,16 +962,21 @@
                                         <asp:TextBox ID="txtSponsorId" runat="server" />
                                     </td>
                                 </tr>
-                                <asp:UpdatePanel ID="updateHearAbout" runat="server">
-                                    <ContentTemplate>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table>
+                                
                                         <tr id="trHearAboutSelection">
                                             <td class="style2">
                                                 <span class="BBFieldCaption ChildSearchFieldCaption">
                                                     <asp:Label ID="lblHowDidYouHearAboutUs" runat="server" /></span> <span class="NCC_ScholarshipApp_requiredIndicator">&nbsp;*</span>
                                             </td>
                                             <td>
-                                                <asp:DropDownList ID="cmbHearAbout" runat="server" CssClass="NCC_ScholarshipApp_dropdown"
-                                                    AutoPostBack="True" OnSelectedIndexChanged="cmbHearAbout_SelectedIndexChanged" />
+                                                <asp:DropDownList ID="cmbHearAbout" runat="server" CssClass="NCC_ScholarshipApp_dropdown" AutoPostBack="true"
+                                                    OnSelectedIndexChanged="cmbHearAbout_SelectedIndexChanged" />
                                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator11" runat="server" ControlToValidate="cmbHearAbout"
                                                     ErrorMessage="How did you hear about us?" ForeColor="Red" ValidationGroup="Checkout">*</asp:RequiredFieldValidator>
                                             </td>
@@ -987,8 +990,6 @@
                                                 <asp:DropDownList ID="ddlHearAboutResponse" runat="server" />
                                             </td>
                                         </tr>
-                                    </ContentTemplate>
-                                </asp:UpdatePanel>
                             </table>
                         </td>
                     </tr>
@@ -1106,7 +1107,7 @@
                                                         <asp:DropDownList ID="cmbCcExpYear" runat="server">
                                                         </asp:DropDownList>
                                                     <asp:RequiredFieldValidator ID="RequiredFieldValidator18" runat="server" ControlToValidate="cmbCcExpYear"
-                                                        Text="*" ErrorMessage="Credit Card Expiration Month" ValidationGroup="Checkout" />
+                                                        Text="*" ErrorMessage="Credit Card Expiration Year" ValidationGroup="Checkout" />
                                                 </td>
                                             </tr>
                                             <tr>

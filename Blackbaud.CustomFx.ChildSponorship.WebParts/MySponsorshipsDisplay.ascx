@@ -206,7 +206,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <span class="BBFieldCaption ChildSearchFieldCaption">Province/Region: *</span></td>
+                                <span class="BBFieldCaption ChildSearchFieldCaption">Province/Region:</span><asp:Label ID="lblProvinceRegionRequired1" runat="server" CssClass="BBFieldCaption ChildSearchFieldCaption" Text="*" Visible="false" /></td>
                             <td class="style4">
                                 <asp:TextBox ID="txtBillingRegion" runat="server" Enabled="False"></asp:TextBox>
                                 <asp:RequiredFieldValidator ID="reqBillingRegion" runat="server" 
@@ -577,7 +577,7 @@
                                                 <asp:DropDownList ID="cmbCcExpYear" runat="server">
                                                 </asp:DropDownList>
                                             <asp:RequiredFieldValidator ID="RequiredFieldValidator18" runat="server" ControlToValidate="cmbCcExpYear"
-                                                Text="*" ErrorMessage="Credit Card Expiration Month" ValidationGroup="Checkout" />
+                                                Text="*" ErrorMessage="Credit Card Expiration Year" ValidationGroup="Checkout" />
                                         </td>
                                     </tr>
                                     <tr>

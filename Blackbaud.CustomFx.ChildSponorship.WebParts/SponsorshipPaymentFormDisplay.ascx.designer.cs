@@ -193,6 +193,15 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator reqState;
         
         /// <summary>
+        /// lblProvinceRegionRequired1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProvinceRegionRequired1;
+        
+        /// <summary>
         /// txtRegion control.
         /// </summary>
         /// <remarks>
@@ -272,15 +281,6 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator10;
-        
-        /// <summary>
-        /// updateBilling control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel updateBilling;
         
         /// <summary>
         /// radBilling control.
@@ -373,6 +373,15 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator reqBillingState;
         
         /// <summary>
+        /// lblProvinceRegionRequired2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProvinceRegionRequired2;
+        
+        /// <summary>
         /// txtBillingRegion control.
         /// </summary>
         /// <remarks>
@@ -425,15 +434,6 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtSponsorId;
-        
-        /// <summary>
-        /// updateHearAbout control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel updateHearAbout;
         
         /// <summary>
         /// lblHowDidYouHearAboutUs control.

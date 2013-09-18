@@ -184,6 +184,15 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator reqBillingState;
         
         /// <summary>
+        /// lblProvinceRegionRequired1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProvinceRegionRequired1;
+        
+        /// <summary>
         /// txtBillingRegion control.
         /// </summary>
         /// <remarks>

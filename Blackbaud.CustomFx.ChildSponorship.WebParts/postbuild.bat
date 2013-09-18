@@ -39,7 +39,7 @@ xcopy "%source_folder%\*display*.ascx" "%target_folder%\custom\ChildSponsorship"
 xcopy "%source_folder%\*edit*.ascx" "%target_folder%\custom\ChildSponsorship" /y 
 xcopy "%source_folder%\*.ashx" "%target_folder%\custom\ChildSponsorship" /y 
 
-"C:\Program Files\7-Zip\7z.exe" a -tzip "C:\DEPLOY\OCM\NetCommunity.zip" "C:\DEPLOY\OCM\NetCommunity"
+::"C:\Program Files\7-Zip\7z.exe" a -tzip "C:\DEPLOY\OCM\NetCommunity.zip" "C:\DEPLOY\OCM\NetCommunity"
 
 GOTO :ALWAYS
 

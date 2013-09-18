@@ -288,22 +288,23 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
         #region "UI behavioral methods"
         protected void cmbCountry_SelectedIndexChanged(object sender, EventArgs e)
         {
-         Country_SelectedIndexChanged(cmbCountry, txtRegion, reqRegion, cmbState, reqState);
+         Country_SelectedIndexChanged(cmbCountry, txtRegion, reqRegion, cmbState, reqState, lblProvinceRegionRequired1);
         }
 
         protected void cmbBillingCountry_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Country_SelectedIndexChanged(cmbBillingCountry, txtBillingRegion, reqBillingRegion, cmbBillingState, reqBillingState);
+            Country_SelectedIndexChanged(cmbBillingCountry, txtBillingRegion, reqBillingRegion, cmbBillingState, reqBillingState, lblProvinceRegionRequired2);
         }        
 
-        private void Country_SelectedIndexChanged(DropDownList cmbCountry, TextBox txtRegion, RequiredFieldValidator reqRegion, DropDownList cmbState, RequiredFieldValidator reqState)
+        private void Country_SelectedIndexChanged(DropDownList cmbCountry, TextBox txtRegion, RequiredFieldValidator reqRegion, DropDownList cmbState, RequiredFieldValidator reqState, Label lblProvinceRegionRequired)
         {
             bool enabled = (cmbCountry.SelectedValue.Equals("US") ? false : true);
             
-            txtRegion.Enabled = enabled;
+            txtRegion.Enabled = enabled;            
             cmbState.Enabled = !enabled;
             reqState.Enabled = !enabled;
             reqRegion.Enabled = enabled;
+            lblProvinceRegionRequired.Visible = enabled;            
         }
 
         protected void cmbHearAbout_SelectedIndexChanged(object sender, EventArgs e)
@@ -336,6 +337,8 @@ namespace Blackbaud.CustomFx.ChildSponsorship.WebParts
                     break;
                 }
             }   
+
+            
         }
         #endregion
 
