@@ -257,6 +257,15 @@ Partial Public Class GivingHistoryEditor2
     Protected WithEvents lblBOQueryType As Global.System.Web.UI.WebControls.Label
 
     '''<summary>
+    '''GiftQueryLink control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents GiftQueryLink As Global.Blackbaud.Web.Content.Portal.QueryLink
+
+    '''<summary>
     '''SoftCreditDisplayCheckBox control.
     '''</summary>
     '''<remarks>
@@ -572,6 +581,15 @@ Partial Public Class GivingHistoryEditor2
     Protected WithEvents lblPledgePaymentPage As Global.System.Web.UI.WebControls.Label
 
     '''<summary>
+    '''PledgePaymentPageLink control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents PledgePaymentPageLink As Global.Blackbaud.Web.Content.Portal.PageLink
+
+    '''<summary>
     '''UnpaidEventPanel control.
     '''</summary>
     '''<remarks>
@@ -588,6 +606,15 @@ Partial Public Class GivingHistoryEditor2
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lblUnpaidEventPage As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''UnpaidEventPageLink control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents UnpaidEventPageLink As Global.Blackbaud.Web.Content.Portal.PageLink
 
     '''<summary>
     '''pnlAdditionalDonation control.
@@ -608,6 +635,15 @@ Partial Public Class GivingHistoryEditor2
     Protected WithEvents lblRecGiftAdditionalDonationPageLink As Global.System.Web.UI.WebControls.Label
 
     '''<summary>
+    '''RecGiftAdditionalDonationPageLink control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RecGiftAdditionalDonationPageLink As Global.Blackbaud.Web.Content.Portal.PageLink
+
+    '''<summary>
     '''RecurringGiftPaymentPanel control.
     '''</summary>
     '''<remarks>
@@ -624,6 +660,15 @@ Partial Public Class GivingHistoryEditor2
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lblRecGiftPaymentPageLink As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''RecGiftPaymentPageLink control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RecGiftPaymentPageLink As Global.Blackbaud.Web.Content.Portal.PageLink
 
     '''<summary>
     '''divRecurringGiftUpdates control.
@@ -714,6 +759,15 @@ Partial Public Class GivingHistoryEditor2
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lblRecGftUpdBOText As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''RecGftUpdFilterQueryLnk control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RecGftUpdFilterQueryLnk As Global.Blackbaud.Web.Content.Portal.QueryLink
 
     '''<summary>
     '''chkAllowRecurringAmountUpdates control.

@@ -7,14 +7,7 @@ Imports System.Drawing
 Imports Blackbaud.Web.Content.Portal
 
 Partial Public Class GivingHistoryEditor2
-    Inherits ContentControl
-
-    Public PledgePaymentPageLink As Blackbaud.Web.Content.Portal.PageLink
-    Public UnpaidEventPageLink As Blackbaud.Web.Content.Portal.PageLink
-    Public RecGiftAdditionalDonationPageLink As Blackbaud.Web.Content.Portal.PageLink
-    Public RecGiftPaymentPageLink As Blackbaud.Web.Content.Portal.PageLink
-    Public RecGftUpdFilterQueryLnk As Blackbaud.Web.Content.Portal.QueryLink
-    Public GiftQueryLink As Blackbaud.Web.Content.Portal.QueryLink
+    Inherits ContentEditControl
 
     Public Const OBJECT_DELIMITER As Char = ":"c
     Public Const ATTRIBUTE_DELIMITER As Char = "|"c
