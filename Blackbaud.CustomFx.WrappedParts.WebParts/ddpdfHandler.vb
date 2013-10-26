@@ -6,7 +6,6 @@ Imports WebSupergoo
 Imports Blackbaud.Web.Content.Portal.Components
 Imports Blackbaud.Web.Content.Portal
 Imports Blackbaud.Web.Content
-Imports WebSupergoo.ABCpdf9
 
 Public NotInheritable Class ddpdfHandler
     Implements IHttpHandler
@@ -316,10 +315,10 @@ Public NotInheritable Class ddpdfHandler
             Dim id As Integer
             Try
                 id = pdfDoc.AddImageHtml(AddBaseElementToHTML(html))
-            Catch ex As Internal.PDFException
-                'CR320252-060209 - Do not remove this try catch unless the new changes do not break this CR.
-                'An exception is thrown if the HTML is blank.  Just eat it.
-                LogErrorToDB(ex, False)
+			Catch ex As ABCpdf8.Internal.PDFException
+				'CR320252-060209 - Do not remove this try catch unless the new changes do not break this CR.
+				'An exception is thrown if the HTML is blank.  Just eat it.
+				LogErrorToDB(ex, False)
             End Try
             'This will work with relative URLs
             'Dim id As Integer

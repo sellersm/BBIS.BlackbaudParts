@@ -1046,9 +1046,9 @@ Partial Public Class GivingHistory2Control
                 Using cmd As New SqlCommand("USR_USP_GETCHILDINFOFORCONSTITUENTID", con)
                     cmd.CommandType = CommandType.StoredProcedure
 
-                    Dim constit = New Core.Data.ShelbyConstituent(BBWebPrincipal.Current.User)
-                    Dim constitID = Core.Data.ShelbyConstituent.GetConstituentsGuid(constit.RecordID).ToString
-
+					Dim constit = New Core.Data.ShelbyConstituent(BBWebPrincipal.Current.User)
+					Dim constitID = Core.Data.ShelbyConstituent.GetConstituentsGuid(constit.RecordID).ToString
+					
                     cmd.Parameters.AddWithValue("@ID", constitID)
 
                     Using dta As New SqlDataAdapter(cmd)
@@ -1059,41 +1059,49 @@ Partial Public Class GivingHistory2Control
             End Using
         Catch cex As NonExistentConstituentException
             'the current user isnt linked to a constituent
-            'do nothing
-        Catch ex As Exception
-            'do nothing
+			'do nothing
+
+		Catch ex As Exception
+			'csm - added this for debugging only
+			'Throw New Exception("Giving History Control - Calling USR_USP_GETCHILDINFOFORCONSTITUENTID", ex)
+			'do nothing
         End Try
 
 
-        'create our dictionary of ids and children
-        For Each row As DataRow In dt.Rows
-            Dim id As New Guid
+		Try
+			'create our dictionary of ids and children
+			For Each row As DataRow In dt.Rows
+				Dim id As New Guid
 
-            'build our designation string
-            Dim designation = String.Format("{0} - {1}", row("NAME").ToString(), row("LOOKUPID").ToString())
+				'build our designation string
+				Dim designation = String.Format("{0} - {1}", row("NAME").ToString(), row("LOOKUPID").ToString())
 
-            If (Guid.TryParse(row("ID").ToString(), id)) Then
-                newValues.Add(id, designation)
-            End If
-        Next
+				If (Guid.TryParse(row("ID").ToString(), id)) Then
+					newValues.Add(id, designation)
+				End If
+			Next
 
-        'loop through the curren datasource and replace the designation with our new text
-        For Each item In dataSource
-            Dim recordID As New Guid()
+			'loop through the curren datasource and replace the designation with our new text
+			For Each item In dataSource
+				Dim recordID As New Guid()
 
-            If (Guid.TryParse(item.Gifts__GiftRecordID, recordID)) Then
-                'get the current design and lookupid
-                Dim desc = item.Gifts__FundraisingPurpose
+				If (Guid.TryParse(item.Gifts__GiftRecordID, recordID)) Then
+					'get the current design and lookupid
+					Dim desc = item.Gifts__FundraisingPurpose
 
-                'if this is a child designation then it will be in the dictionary
-                If (newValues.ContainsKey(recordID)) Then
-                    desc = newValues(recordID)
-                End If
+					'if this is a child designation then it will be in the dictionary
+					If (newValues.ContainsKey(recordID)) Then
+						desc = newValues(recordID)
+					End If
 
-                'set the new value
-                item.Gifts__FundDescription = desc
-            End If
-        Next
+					'set the new value
+					item.Gifts__FundDescription = desc
+				End If
+			Next
+
+		Catch ex As Exception
+			'do nothing
+		End Try
     End Sub
 
     Private Sub BindRepeater(ByVal dataSource As IList(Of GivingHistoryDataRow))

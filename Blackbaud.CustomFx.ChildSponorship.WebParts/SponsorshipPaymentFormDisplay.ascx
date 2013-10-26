@@ -3,9 +3,8 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        //hide the billing table and rfvs for the first time
         BillingDisplay();
-
+        PaymentDisplay();
 
         $("#<%= radIsSponsor.ClientID %>").change(function () {
             var display = "none";
@@ -19,6 +18,10 @@
 
         $("#<%= radBilling.ClientID %>").change(function () {
             BillingDisplay();
+        });
+
+        $("#<%= radPayment.ClientID %>").change(function () {
+            PaymentDisplay();
         });
 
         function BillingDisplay() {
@@ -39,7 +42,7 @@
             ValidatorEnable($("#<%= RequiredFieldValidator13.ClientID %>")[0], enabled);
         }
 
-        $("#<%= radPayment.ClientID %>").change(function () {
+        function PaymentDisplay() {
             var enable = false;
 
             if ($("#<%= radPayment.ClientID %>").find('input:checked').val() == "CC") {
@@ -51,14 +54,14 @@
                 $("#tblCheck").css("display", "table");
                 $("#<%= radCcRecurrence.ClientID %>").val("OneTimeGift");
             }
-            
+
             ValidatorEnable($("#<%= reqCcName.ClientID %>")[0], enable);
             ValidatorEnable($("#<%= RequiredFieldValidator12.ClientID %>")[0], enable);
             ValidatorEnable($("#<%= RequiredFieldValidator15.ClientID %>")[0], enable);
             ValidatorEnable($("#<%= RequiredFieldValidator16.ClientID %>")[0], enable);
             ValidatorEnable($("#<%= RequiredFieldValidator17.ClientID %>")[0], enable);
             ValidatorEnable($("#<%= RequiredFieldValidator18.ClientID %>")[0], enable);
-        });
+        }
     });
 </script>
 <style type="text/css">
