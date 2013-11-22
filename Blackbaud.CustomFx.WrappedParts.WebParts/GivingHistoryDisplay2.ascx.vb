@@ -336,9 +336,10 @@ Partial Public Class GivingHistoryDisplay2
 
 
 
-            ' Gift Types
-            group = "Transaction Manager - Gift Types"
-            .RegisterCodeTableLanguageFields(EStaticCodeTables.GiftTypesRemoveUnused, Nothing, group, FieldInfo.ELanguageStringType.Message)
+			' Gift Types
+			' CSM - temporarily commented out.
+			group = "Transaction Manager - Gift Types"
+			.RegisterCodeTableLanguageFields(EStaticCodeTables.GiftTypesRemoveUnused, Nothing, group, FieldInfo.ELanguageStringType.Message)
 
             ' Help Text
             group = "Transaction Manager - Help Text"

@@ -14,27 +14,30 @@ Partial Public Class GivingHistory2Control
     Inherits ContentControl
 
 #Region "Constants"
-    Const ALL_FUNDS As String = "*"
-    Const DUMMYROW As String = "DUMMYROW"
-    Const SORT_COMMAND_ARG As String = "GivingHistorySort"
-    Const VS_SORT_COLUMN As String = "GivingHistorySortColumn"
-    Const VS_SORT_ASC As String = "GivingHistorySortAsc"
-    Const VS_SELECTED_START_DATE As String = "GivingHistory2DatePickerStartDate"
-    Const VS_SELECTED_END_DATE As String = "GivingHistory2DatePickerEndDate"
-    Const VS_SELECTED_FUND As String = "GivingHistory2FundPickerOption"
-    Const VS_PLEDGEPAYMENTPAGEINVALID As String = "GivingHistory2PledgePaymentPageInvalid"
-    Const VS_FILTER_FUND As String = "GivingHistory2FilterByFund"
-    Const VS_FILTER_DATE As String = "GivingHistory2FilterByDate"
-    Const VS_SELECTED_FUND_INDEX As String = "GivingHistory2SelectedFundIndex"
-    Const VS_SELECTED_DATE_INDEX As String = "GivingHistory2SelectedDateIndex"
-    Const VS_ADDITIONALDONATIONPAGEINVALID As String = "GivingHistory2AdditionalDonationPageInvalid"
-    Const VS_RECURRINGGIFTPAYMENTPAGEINVALID As String = "GivingHistory2RecurringGiftPaymentPageInvalid"
-    Const VS_FILTER_GROUP As String = "GivingHistory2GroupFilter"
-    Const VS_SELECTED_GROUP As String = "GivingHistory2SelectedGroup"
-    Const VS_ADDITIONALDONATIONMERCHANTACCOUNTID As String = "AdditionalDonationMerchantAccountID"
-    Const VS_PLEDGEPAYMENTMERCHANTACCOUNTID As String = "PledgePaymentMerchantAccountID"
-    Const VS_RECURRINGGIFTPAYMENTMERCHANTACCOUNTID As String = "RecurringGiftPaymentMerchantAccountID"
-    Const VS_EVENTPAYMENTMERCHANTACCOUNTID As String = "EventPaymentMerchantAccountID"
+	Const MAX_CHILDREN_IN_DESC As Integer = 4 'OCM - added by csm.  The number of child names to display before summarizing it as "5 children"
+	Const MIN_DATE As String = "11/1/12" 'OCM - added by csm.  The earliest date to retrieve data to replace designations.  This should be specified as an option to the part.
+
+	Const ALL_FUNDS As String = "*"
+	Const DUMMYROW As String = "DUMMYROW"
+	Const SORT_COMMAND_ARG As String = "GivingHistorySort"
+	Const VS_SORT_COLUMN As String = "GivingHistorySortColumn"
+	Const VS_SORT_ASC As String = "GivingHistorySortAsc"
+	Const VS_SELECTED_START_DATE As String = "GivingHistory2DatePickerStartDate"
+	Const VS_SELECTED_END_DATE As String = "GivingHistory2DatePickerEndDate"
+	Const VS_SELECTED_FUND As String = "GivingHistory2FundPickerOption"
+	Const VS_PLEDGEPAYMENTPAGEINVALID As String = "GivingHistory2PledgePaymentPageInvalid"
+	Const VS_FILTER_FUND As String = "GivingHistory2FilterByFund"
+	Const VS_FILTER_DATE As String = "GivingHistory2FilterByDate"
+	Const VS_SELECTED_FUND_INDEX As String = "GivingHistory2SelectedFundIndex"
+	Const VS_SELECTED_DATE_INDEX As String = "GivingHistory2SelectedDateIndex"
+	Const VS_ADDITIONALDONATIONPAGEINVALID As String = "GivingHistory2AdditionalDonationPageInvalid"
+	Const VS_RECURRINGGIFTPAYMENTPAGEINVALID As String = "GivingHistory2RecurringGiftPaymentPageInvalid"
+	Const VS_FILTER_GROUP As String = "GivingHistory2GroupFilter"
+	Const VS_SELECTED_GROUP As String = "GivingHistory2SelectedGroup"
+	Const VS_ADDITIONALDONATIONMERCHANTACCOUNTID As String = "AdditionalDonationMerchantAccountID"
+	Const VS_PLEDGEPAYMENTMERCHANTACCOUNTID As String = "PledgePaymentMerchantAccountID"
+	Const VS_RECURRINGGIFTPAYMENTMERCHANTACCOUNTID As String = "RecurringGiftPaymentMerchantAccountID"
+	Const VS_EVENTPAYMENTMERCHANTACCOUNTID As String = "EventPaymentMerchantAccountID"
 #End Region
 
 #Region "Private Members"
@@ -413,11 +416,12 @@ Partial Public Class GivingHistory2Control
         End Get
     End Property
 
-    Public ReadOnly Property ShowFundPicker() As Boolean
-        Get
-            Return Me.History.UsedFields().Columns.Exists(Function(c As GivingHistoryColumn) c.TableName = "Gifts" AndAlso c.ColumnName = "FundDescription")
-        End Get
-    End Property
+	Public ReadOnly Property ShowFundPicker() As Boolean
+		' OCM - csm - removed manually, because the values were wrong.
+		Get			
+			Return False 'Me.History.UsedFields().Columns.Exists(Function(c As GivingHistoryColumn) c.TableName = "Gifts" AndAlso c.ColumnName = "FundDescription")
+		End Get
+	End Property
 
     'as of right now this property will only affect infinity
     Public Property OverrideGiftTypeFilter As List(Of Enumerations.EInfinityGiftType)
@@ -1049,14 +1053,17 @@ Partial Public Class GivingHistory2Control
 					Dim constit = New Core.Data.ShelbyConstituent(BBWebPrincipal.Current.User)
 					Dim constitID = Core.Data.ShelbyConstituent.GetConstituentsGuid(constit.RecordID).ToString
 					
-                    cmd.Parameters.AddWithValue("@ID", constitID)
+					cmd.Parameters.AddWithValue("@constituentID", constitID)
+					cmd.Parameters.AddWithValue("@maxChildrenInDesc", MAX_CHILDREN_IN_DESC)
+					cmd.Parameters.AddWithValue("@minDate", CDate(MIN_DATE))
 
                     Using dta As New SqlDataAdapter(cmd)
                         cmd.Connection.Open()
                         dta.Fill(dt)
                     End Using
                 End Using
-            End Using
+			End Using
+
         Catch cex As NonExistentConstituentException
             'the current user isnt linked to a constituent
 			'do nothing
@@ -1074,10 +1081,11 @@ Partial Public Class GivingHistory2Control
 				Dim id As New Guid
 
 				'build our designation string
-				Dim designation = String.Format("{0} - {1}", row("NAME").ToString(), row("LOOKUPID").ToString())
+				' OCM - csm - don't need to format this - commented out
+				'Dim designation = String.Format("{0} - {1}", row("NAME").ToString(), row("LOOKUPID").ToString())
 
 				If (Guid.TryParse(row("ID").ToString(), id)) Then
-					newValues.Add(id, designation)
+					newValues.Add(id, row("APPLICATIONSWITHMAX"))
 				End If
 			Next
 
@@ -1117,7 +1125,9 @@ Partial Public Class GivingHistory2Control
         Else
             Me.grid.DataSource = dataSource
             '176005 - briansw - android devices cannot handle the PDF/CSV response and download the file
-            Me.ExportContainer.Visible = Not Me.Request.UserAgent.Contains("Android")
+			' OCM - csm - removed until underlying data is fixed
+			'Me.ExportContainer.Visible = Not Me.Request.UserAgent.Contains("Android")
+			Me.ExportContainer.Visible = False
         End If
 
         Me._ddCount = 0
