@@ -1,5 +1,6 @@
 if %computername%==CHS6JOSEPHSTY02 goto :JOSEPHST
 if %computername%==CHS6CHRISWHI02 goto :CHRISWH
+if %computername%==BA51 goto :CARYM
 if %computername%==ANOTHER_DEVELOPERS_MACHINE_NAME goto :ANOTHER_DEVELOPERS_POSTBUILD
 GOTO :ALWAYS
 
@@ -41,6 +42,13 @@ copy "D:\MyCode\MissionOfMercy\Blackbaud.CustomFx.ChildSponorship.WebParts\bin\*
 copy "D:\MyCode\MissionOfMercy\Blackbaud.CustomFx.ChildSponorship.WebParts\*.ascx" "C:\Program Files (x86)\Blackbaud\NetCommunity\Custom\ChildSponsorship\"
 copy "D:\MyCode\MissionOfMercy\Blackbaud.CustomFx.ChildSponorship.WebParts\*.ashx" "C:\Program Files (x86)\Blackbaud\NetCommunity\Custom\ChildSponsorship\"
 GOTO :ALWAYS
+
+:CARYM
+set target_folder=C:\Program Files\Blackbaud\NetCommunity
+set source_folder=C:\MissionOfMercy\CRM\Source\BBIS Blackbaud Parts\Blackbaud.CustomFx.WrappedParts.WebParts
+
+xcopy "%source_folder%\bin\Blackbaud.CustomFx.WrappedParts.WebParts.dll" "%target_folder%\Bin\" /y /d
+
 
 :ALWAYS
 ::put things here that should always run, for any user

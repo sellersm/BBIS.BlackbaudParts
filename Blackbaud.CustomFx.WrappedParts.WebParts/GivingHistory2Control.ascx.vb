@@ -965,74 +965,76 @@ Partial Public Class GivingHistory2Control
 
         Dim appliedQuery = Blackbaud.CustomFx.WrappedParts.WebParts.Data.GivingHistory.getGivingHistoryDataSource(Me.History.GivingHistoryData, Me.History.IncludeUnpaidEvents)
 
-        If filterchanged OrElse tabchanged Then
-            If FilterByFund Then
-                appliedQuery = Me.History.FilterByFund(Me.SelectedFund, appliedQuery)
-            End If
+		If filterchanged OrElse tabchanged Then
+			' OCM - csm Removed until filter is used.  
+			'			When the filter value is blank it would multiple the number of rows returned.
+			'If FilterByFund Then
+			'	appliedQuery = Me.History.FilterByFund(Me.SelectedFund, appliedQuery)
+			'End If
 
-            If FilterByDate Then
-                appliedQuery = Me.History.FilterByDate(Me.SelectedStartDate, Me.SelectedEndDate, appliedQuery)
-            End If
+			If FilterByDate Then
+				appliedQuery = Me.History.FilterByDate(Me.SelectedStartDate, Me.SelectedEndDate, appliedQuery)
+			End If
 
-            If tabchanged Then
-                SetCurrentPageIndex(1)
-            End If
-        End If
+			If tabchanged Then
+				SetCurrentPageIndex(1)
+			End If
+		End If
 
-        If Me.ShowActiveGiftsOnly Then
-            appliedQuery = appliedQuery.Where(Function(f) f.Gifts__IsActiveGift)
-        End If
+		If Me.ShowActiveGiftsOnly Then
+			appliedQuery = appliedQuery.Where(Function(f) f.Gifts__IsActiveGift)
+		End If
 
-        Dim enumeratedQuery As IList(Of GivingHistoryDataRow)
-        enumeratedQuery = Me.ApplyLanguageToList(appliedQuery)
+		Dim enumeratedQuery As IList(Of GivingHistoryDataRow)
+		enumeratedQuery = Me.ApplyLanguageToList(appliedQuery)
 
-        Me.SetDefaultSort()
+		Me.SetDefaultSort()
 
-        If Me.FilterByGroup Then
-            If SelectedGroup.HasValue() Then
-                If SelectedGroup.Value = -1 Then
+		If Me.FilterByGroup Then
+			If SelectedGroup.HasValue() Then
+				If SelectedGroup.Value = -1 Then
 
-                Else
-                    Dim groupedQuery = History.Group(SelectedGroup.Value, enumeratedQuery)
-                    'Rebuild this list by group
+				Else
+					Dim groupedQuery = History.Group(SelectedGroup.Value, enumeratedQuery)
+					'Rebuild this list by group
 
-                    Dim ls As New List(Of GivingHistoryDataRow)
-                    'TODO This could probably stand being optimized somehow
-                    Dim grpCount As Integer = 0
-                    For Each grp In groupedQuery
-                        If Not Me.grid.GroupHeaders.ContainsKey(grpCount) Then
-                            Me.grid.GroupHeaders.Add(grpCount, Server.HtmlEncode(If(grp.Key IsNot Nothing, grp.Key.ToString, " ")))
+					Dim ls As New List(Of GivingHistoryDataRow)
+					'TODO This could probably stand being optimized somehow
+					Dim grpCount As Integer = 0
+					For Each grp In groupedQuery
+						If Not Me.grid.GroupHeaders.ContainsKey(grpCount) Then
+							Me.grid.GroupHeaders.Add(grpCount, Server.HtmlEncode(If(grp.Key IsNot Nothing, grp.Key.ToString, " ")))
 
-                            Dim subTotal As Decimal = 0
+							Dim subTotal As Decimal = 0
 
-                            grpCount += grp.Count
-                            For i As Integer = 0 To grp.Count - 1
-                                subTotal += grp(i).Gifts__AmountUnformatted
-                            Next
-                            If grpCount = 0 Then
-                                Me.grid.SubTotalHeaders.Add(grpCount, String.Format("<b>{0:C}</b>", subTotal))
-                            Else
-                                Me.grid.SubTotalHeaders.Add(grpCount - 1, String.Format("<b>{0:C}</b>", subTotal))
-                            End If
-                        End If
+							grpCount += grp.Count
+							For i As Integer = 0 To grp.Count - 1
+								subTotal += grp(i).Gifts__AmountUnformatted
+							Next
+							If grpCount = 0 Then
+								Me.grid.SubTotalHeaders.Add(grpCount, String.Format("<b>{0:C}</b>", subTotal))
+							Else
+								Me.grid.SubTotalHeaders.Add(grpCount - 1, String.Format("<b>{0:C}</b>", subTotal))
+							End If
+						End If
 
-                        If SortColumn.HasValue Then
-                            ls.AddRange(Me.History.Sort(SortColumn.Value, SortAscending, grp.ToList))
-                        Else
-                            ls.AddRange(grp.ToList)
-                        End If
-                    Next
-                    enumeratedQuery = ls
-                End If
+						If SortColumn.HasValue Then
+							ls.AddRange(Me.History.Sort(SortColumn.Value, SortAscending, grp.ToList))
+						Else
+							ls.AddRange(grp.ToList)
+						End If
+					Next
+					enumeratedQuery = ls
+				End If
 
-            Else
-                'TODO: Non-Column based Groups go here
-            End If
-        ElseIf SortColumn.HasValue Then
-            enumeratedQuery = Me.History.Sort(SortColumn.Value, SortAscending, enumeratedQuery)
-        End If
+			Else
+				'TODO: Non-Column based Groups go here
+			End If
+		ElseIf SortColumn.HasValue Then
+			enumeratedQuery = Me.History.Sort(SortColumn.Value, SortAscending, enumeratedQuery)
+		End If
 
-        Return enumeratedQuery
+		Return enumeratedQuery
     End Function
 
     ''' <summary>
